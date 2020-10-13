@@ -1,6 +1,5 @@
 import React, { Component, useRef, useEffect, useState } from 'react';
 import * as Scroll from 'react-scroll';
-import TimelinePicure from './CarPicture.js/index.js';
 
 var Element = Scroll.Element;
 var scroller = Scroll.scroller;
@@ -151,17 +150,13 @@ Here is my 2006 Subaru Impreza WRX TR.  I have owned this car since July of 2010
             <div className = "month">
               <div className="timeline">MAR 2020</div>
               <div className="picture-container">
-                <TimelinePicure />
-                <TimelinePicure />
-                <TimelinePicure />
+
               </div><br/>
             </div>
             <div className = "month">
               <div className="timeline">MAR 2020</div>
               <div className="picture-container">
-                <TimelinePicure />
-                <TimelinePicure />
-                <TimelinePicure />
+
               </div><br/>
             </div>
           
