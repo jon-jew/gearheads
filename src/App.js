@@ -5,10 +5,10 @@ import Explore from './pages/Explore.js';
 import Garage from './pages/Garage.js';
 import CarPage from './pages/CarPage.js';
 import Login from './pages/Login.js';
+import Profile from './pages/UserProfile.js';
 import ScrollToTop from 'react-router-scroll-top'
 
 import { BrowserRouter as Router, Route, Link, NavLink } from "react-router-dom";
-
 
 function App() {
   return (
@@ -19,12 +19,10 @@ function App() {
         <Route path="/garage/" exact component={Garage} />
         <Route path="/carpage/" exact component={CarPage} />
         <Route path="/login/" exact component={Login} />
+        <Route path="/user/" exact component={Profile} />
         <ScrollToTop/>
     </Router>
-
   );
-}
-
-
+};
 
 export default App;
