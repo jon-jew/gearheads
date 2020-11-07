@@ -8,6 +8,7 @@
     "babel": "^6.23.0",
     "babel-preset-react-app": "^9.0.0",
     "bootstrap": "^4.5.3",
+    "fuse": "^0.4.0",
     "fuse.js": "^6.4.3",
     "normalize.css": "^8.0.1",
     "react": "^16.8.6",
