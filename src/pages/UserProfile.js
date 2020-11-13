@@ -1,8 +1,17 @@
-import React, { useState, useEffect } from "react";
+import React, {useState, useEffect} from "react";
 import NavbarHome from "../components/NavbarHome.js";
 import Sidebar from "../components/Sidebar.js";
+<<<<<<< HEAD
 import { Button, FormControl, InputGroup } from "react-bootstrap";
 import Fuse from "fuse.js";
+=======
+import CarCardContainer from "../components/CarCardContainer.js";
+import {Button, FormControl, InputGroup} from "react-bootstrap";
+import Fuse from 'fuse.js';
+
+import "../css/App.css";
+
+>>>>>>> b63de06b5e9af4ab316581f39fdf45a4c245fa70
 import axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faImages } from "@fortawesome/free-regular-svg-icons";
@@ -10,7 +19,7 @@ import { faImages } from "@fortawesome/free-regular-svg-icons";
 import "../css/UserProfile.css";
 
 const INSTAGRAM_TOKEN =
-  "IGQVJWdU11dUVrc3M2V2ppTExoUmFjM09KUmhsazIzekNheTRhVFduV2lmaTlfcnppejgtZA2w0NnA2WDljWU1tSFdrNURQVExoZA1FUb0Y3TTBOUGhVUHV4ZAnFDU1A0dEUwNzBicWRQajhfNmg1OWpDdwZDZD";
+    "IGQVJWdU11dUVrc3M2V2ppTExoUmFjM09KUmhsazIzekNheTRhVFduV2lmaTlfcnppejgtZA2w0NnA2WDljWU1tSFdrNURQVExoZA1FUb0Y3TTBOUGhVUHV4ZAnFDU1A0dEUwNzBicWRQajhfNmg1OWpDdwZDZD";
 const API_URL = "https://graph.instagram.com/me/media?fields=";
 const API_FIELDS = "caption,media_url,media_type,permalink,timestamp,username";
 const ALBUM_FIELDS = "media_url";
