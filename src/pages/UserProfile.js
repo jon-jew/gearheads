@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from "react";
 import NavbarHome from "../components/NavbarHome.js";
 import Sidebar from "../components/Sidebar.js";
-import CarCardContainer from "../components/CarCardContainer.js";
 import { Button, FormControl, InputGroup } from "react-bootstrap";
 import Fuse from "fuse.js";
+import axios from "axios";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faImages } from "@fortawesome/free-regular-svg-icons";
 
 import "../css/UserProfile.css";
-
-import axios from "axios";
 
 const INSTAGRAM_TOKEN =
   "IGQVJWdU11dUVrc3M2V2ppTExoUmFjM09KUmhsazIzekNheTRhVFduV2lmaTlfcnppejgtZA2w0NnA2WDljWU1tSFdrNURQVExoZA1FUb0Y3TTBOUGhVUHV4ZAnFDU1A0dEUwNzBicWRQajhfNmg1OWpDdwZDZD";
@@ -37,15 +37,13 @@ function UserProfile() {
   }, []);
 
   const searchInstagramPosts = () => {
-      const fuse = new Fuse(instagramPosts, options);
-      setPictures(fuse.search(search).map(a => a.item));
+    const fuse = new Fuse(instagramPosts, options);
+    setPictures(fuse.search(search).map((a) => a.item));
   };
 
-  console.log(openAlbums);
-
-  async function toggleAlbum (id) {
+  async function toggleAlbum(id) {
     const foundAlbum = openAlbums.find((e) => e.id == id);
-    let albumContents = []
+    let albumContents = [];
 
     const url = `https://graph.instagram.com/${id}/children?fields=${ALBUM_FIELDS}&access_token=${INSTAGRAM_TOKEN}`;
     const body = {};
@@ -61,12 +59,12 @@ function UserProfile() {
       const newOpenAlbums = openAlbums.concat(album);
       setOpenAlbums(newOpenAlbums);
     } else {
-      const newOpenAlbums = openAlbums.filter(function(e) {
+      const newOpenAlbums = openAlbums.filter(function (e) {
         return e.id !== id;
       });
       setOpenAlbums(newOpenAlbums);
     }
-  };
+  }
 
   const handleSearchChange = (e) => {
     setSearch(e.target.value);
@@ -96,19 +94,43 @@ function UserProfile() {
             {pictures.map(function (element) {
               return (
                 <div className="insta-pic-container">
-                  <img className="insta-pic" src={element.media_url}></img>
-                  { element.media_type === "CAROUSEL_ALBUM" &&
-                    <Button onClick={() => { toggleAlbum(element.id) }}>
-                      open
-                    </Button>
-                  }
-                  { element.media_type === "CAROUSEL_ALBUM" && openAlbums.find((e) => e.id == element.id) !== undefined &&
-                    openAlbums.find((e) => e.id == element.id).contents.map(function (img) {
-                      return (
-                        <img src={img.media_url} width="100"></img>
-                      )
-                    })
-                  }
+                  {element.media_type === "IMAGE" && (
+                    <img className="insta-pic" src={element.media_url}></img>
+                  )}
+                  {element.media_type === "CAROUSEL_ALBUM" &&
+                    openAlbums.find((e) => e.id == element.id) == undefined && (
+                      <div>
+                        <Button
+                          onClick={() => {
+                            toggleAlbum(element.id);
+                          }}
+                        >
+                          <FontAwesomeIcon icon={faImages} />
+                        </Button>
+                        <img
+                          className="insta-pic"
+                          src={element.media_url}
+                        ></img>
+                      </div>
+                    )}
+                  {element.media_type === "CAROUSEL_ALBUM" &&
+                    openAlbums.find((e) => e.id == element.id) !==
+                      undefined && (
+                      <div>
+                        <Button
+                          onClick={() => {
+                            toggleAlbum(element.id);
+                          }}
+                        >
+                          <FontAwesomeIcon icon={faImages} />
+                        </Button>
+                        {openAlbums
+                          .find((e) => e.id == element.id)
+                          .contents.map(function (img) {
+                            return <img src={img.media_url} width="200"></img>;
+                          })}
+                      </div>
+                    )}
                   <p>{element.caption}</p>
                 </div>
               );

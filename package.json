@@ -4,6 +4,9 @@
   "private": true,
   "dependencies": {
     "@csstools/normalize.css": "^10.1.0",
+    "@fortawesome/fontawesome-svg-core": "^1.2.32",
+    "@fortawesome/free-regular-svg-icons": "^5.15.1",
+    "@fortawesome/react-fontawesome": "^0.1.12",
     "axios": "^0.21.0",
     "babel": "^6.23.0",
     "babel-preset-react-app": "^9.0.0",
