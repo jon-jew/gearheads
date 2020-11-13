@@ -24,6 +24,7 @@ let instagramPosts = [];
 function UserProfile() {
   const [pictures, setPictures] = useState([]);
   const [search, setSearch] = useState("");
+  const [openAlbums, setOpenAlbums] = useState([]);
 
   useEffect(() => {
     const url = API_URL + API_FIELDS + "&access_token=" + INSTAGRAM_TOKEN;
@@ -35,22 +36,36 @@ function UserProfile() {
     });
   }, []);
 
-  const url2 = "https://graph.instagram.com/18142765852101963/children?fields=" + ALBUM_FIELDS + "&access_token=" + INSTAGRAM_TOKEN;
-  const body = {};
-  axios.get(url2, body).then((res) => {
-    console.log(res.data.data);
-  });
-
   const searchInstagramPosts = () => {
       const fuse = new Fuse(instagramPosts, options);
-
-    //   if (search !== '') {
-    //     setPictures(instagramPosts.filter((s) => s.caption === search));
-    //   } else {
-    //       setPictures(instagramPosts);
-    //   }
-
       setPictures(fuse.search(search).map(a => a.item));
+  };
+
+  console.log(openAlbums);
+
+  async function toggleAlbum (id) {
+    const foundAlbum = openAlbums.find((e) => e.id == id);
+    let albumContents = []
+
+    const url = `https://graph.instagram.com/${id}/children?fields=${ALBUM_FIELDS}&access_token=${INSTAGRAM_TOKEN}`;
+    const body = {};
+    await axios.get(url, body).then((res) => {
+      albumContents = res.data.data;
+    });
+
+    if (foundAlbum == undefined) {
+      const album = {
+        id: id,
+        contents: albumContents,
+      };
+      const newOpenAlbums = openAlbums.concat(album);
+      setOpenAlbums(newOpenAlbums);
+    } else {
+      const newOpenAlbums = openAlbums.filter(function(e) {
+        return e.id !== id;
+      });
+      setOpenAlbums(newOpenAlbums);
+    }
   };
 
   const handleSearchChange = (e) => {
@@ -78,11 +93,23 @@ function UserProfile() {
             </InputGroup.Append>
           </InputGroup>
           <div>
-            {pictures.map(function (e) {
+            {pictures.map(function (element) {
               return (
                 <div className="insta-pic-container">
-                  <img className="insta-pic" src={e.media_url}></img>
-                  <p>{e.caption}</p>
+                  <img className="insta-pic" src={element.media_url}></img>
+                  { element.media_type === "CAROUSEL_ALBUM" &&
+                    <Button onClick={() => { toggleAlbum(element.id) }}>
+                      open
+                    </Button>
+                  }
+                  { element.media_type === "CAROUSEL_ALBUM" && openAlbums.find((e) => e.id == element.id) !== undefined &&
+                    openAlbums.find((e) => e.id == element.id).contents.map(function (img) {
+                      return (
+                        <img src={img.media_url} width="100"></img>
+                      )
+                    })
+                  }
+                  <p>{element.caption}</p>
                 </div>
               );
             })}
