@@ -1,17 +1,10 @@
 import React, {useState, useEffect} from "react";
-import NavbarHome from "../components/NavbarHome.js";
 import Sidebar from "../components/Sidebar.js";
-<<<<<<< HEAD
 import { Button, FormControl, InputGroup } from "react-bootstrap";
 import Fuse from "fuse.js";
-=======
-import CarCardContainer from "../components/CarCardContainer.js";
-import {Button, FormControl, InputGroup} from "react-bootstrap";
-import Fuse from 'fuse.js';
 
 import "../css/App.css";
 
->>>>>>> b63de06b5e9af4ab316581f39fdf45a4c245fa70
 import axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faImages } from "@fortawesome/free-regular-svg-icons";
