@@ -3,9 +3,9 @@ import NavbarHome from "../components/NavbarHome.js";
 import Sidebar from "../components/Sidebar.js";
 import CarCardContainer from "../components/CarCardContainer.js";
 import { Button, FormControl, InputGroup } from "react-bootstrap";
-import Fuse from 'fuse.js';
+import Fuse from "fuse.js";
 
-import "../css/App.css";
+import "../css/UserProfile.css";
 
 import axios from "axios";
 
@@ -13,12 +13,13 @@ const INSTAGRAM_TOKEN =
   "IGQVJWdU11dUVrc3M2V2ppTExoUmFjM09KUmhsazIzekNheTRhVFduV2lmaTlfcnppejgtZA2w0NnA2WDljWU1tSFdrNURQVExoZA1FUb0Y3TTBOUGhVUHV4ZAnFDU1A0dEUwNzBicWRQajhfNmg1OWpDdwZDZD";
 const API_URL = "https://graph.instagram.com/me/media?fields=";
 const API_FIELDS = "caption,media_url,media_type,permalink,timestamp,username";
+const ALBUM_FIELDS = "media_url";
 
 const options = {
-    keys: [
-      "caption"
-    ]
-  }; 
+  keys: ["caption"],
+};
+
+let instagramPosts = [];
 
 function UserProfile() {
   const [pictures, setPictures] = useState([]);
@@ -28,23 +29,32 @@ function UserProfile() {
     const url = API_URL + API_FIELDS + "&access_token=" + INSTAGRAM_TOKEN;
     const body = {};
     axios.get(url, body).then((res) => {
-      setPictures(res.data.data);
+      instagramPosts = res.data.data;
+      console.log(res.data.data);
+      setPictures(instagramPosts);
     });
   }, []);
 
-  const getInstagramPosts = () => {
-    const url = API_URL + API_FIELDS + "&access_token=" + INSTAGRAM_TOKEN;
-    const body = {};
-    axios.get(url, body).then((res) => {
-        const fuse = new Fuse(res.data.data, options);
-        console.log(res.data.data);
-        console.log(search);
-      setPictures(fuse.search(search));
-    });
+  const url2 = "https://graph.instagram.com/18142765852101963/children?fields=" + ALBUM_FIELDS + "&access_token=" + INSTAGRAM_TOKEN;
+  const body = {};
+  axios.get(url2, body).then((res) => {
+    console.log(res.data.data);
+  });
+
+  const searchInstagramPosts = () => {
+      const fuse = new Fuse(instagramPosts, options);
+
+    //   if (search !== '') {
+    //     setPictures(instagramPosts.filter((s) => s.caption === search));
+    //   } else {
+    //       setPictures(instagramPosts);
+    //   }
+
+      setPictures(fuse.search(search).map(a => a.item));
   };
 
   const handleSearchChange = (e) => {
-      setSearch(e.target.value);
+    setSearch(e.target.value);
   };
 
   return (
@@ -59,7 +69,10 @@ function UserProfile() {
               aria-label="imagesearch"
             />
             <InputGroup.Append>
-              <Button variant="outline-secondary" onClick={getInstagramPosts}>
+              <Button
+                variant="outline-secondary"
+                onClick={searchInstagramPosts}
+              >
                 Search
               </Button>
             </InputGroup.Append>
@@ -67,8 +80,8 @@ function UserProfile() {
           <div>
             {pictures.map(function (e) {
               return (
-                <div>
-                  <img src={e.media_url}></img>
+                <div className="insta-pic-container">
+                  <img className="insta-pic" src={e.media_url}></img>
                   <p>{e.caption}</p>
                 </div>
               );

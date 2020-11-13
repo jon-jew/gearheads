@@ -1,0 +1,12 @@
+.insta-pic-container {
+    display: inline-block;
+    width: 300px;
+    padding: 10px;
+    background: rgb(236, 236, 236);
+    border-radius: 20px;
+    margin-right: 10px;
+}
+
+.insta-pic {
+    width: 95%;
+}
