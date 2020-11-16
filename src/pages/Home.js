@@ -12,18 +12,6 @@ const API_URL = "https://graph.instagram.com/me/media?fields=";
 const API_FIELDS = "caption,media_url,media_type,permalink,timestamp,username";
 
 
-const getInstagramPosts = () => {
-    const url = API_URL + API_FIELDS + "&access_token=" + INSTAGRAM_TOKEN;
-    const body = {
-
-    };
-    axios.get(url, body)
-        .then((res) => {
-            console.log(res);
-            console.log(res.data);
-        });
-}
-
 
 function Home() {
   return(
@@ -37,8 +25,6 @@ function Home() {
             Welcome to Gearheads!
             Use this to explore other people's cars.
           </div>
-          <button onClick={getInstagramPosts}>Test</button>
-
 
           <CarCardContainer />
         </main>

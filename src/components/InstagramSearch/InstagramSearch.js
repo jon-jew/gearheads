@@ -7,7 +7,7 @@ import "../../css/App.css";
 
 import axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faImages } from "@fortawesome/free-regular-svg-icons";
+import { faImages, faPlusSquare } from "@fortawesome/free-regular-svg-icons";
 
 import "./InstagramSearch.css";
 
@@ -27,13 +27,14 @@ function UserProfile() {
   const [pictures, setPictures] = useState([]);
   const [search, setSearch] = useState("");
   const [openAlbums, setOpenAlbums] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const url = API_URL + API_FIELDS + "&access_token=" + INSTAGRAM_TOKEN;
     const body = {};
     axios.get(url, body).then((res) => {
+      setLoading(false);
       instagramPosts = res.data.data;
-      console.log(res.data.data);
       setPictures(instagramPosts);
     });
   }, []);
@@ -77,27 +78,43 @@ function UserProfile() {
       <div id="outer-container">
         <Sidebar />
         <main id="page-wrap">
-          <InputGroup className="mb-3">
-            <FormControl
-              onChange={handleSearchChange}
-              placeholder="Search for images"
-              aria-label="imagesearch"
-            />
-            <InputGroup.Append>
-              <Button
-                variant="outline-secondary"
-                onClick={searchInstagramPosts}
-              >
-                Search
-              </Button>
-            </InputGroup.Append>
-          </InputGroup>
+          <h4>Import photos to your vehicle from your Instagram posts</h4>
+          <div className="instagram-search">
+            <InputGroup className="mb-3">
+              <FormControl
+                onChange={handleSearchChange}
+                placeholder="Search for images"
+                aria-label="imagesearch"
+              />
+              <InputGroup.Append>
+                <Button
+                  variant="outline-secondary"
+                  onClick={searchInstagramPosts}
+                >
+                  Search
+                </Button>
+              </InputGroup.Append>
+            </InputGroup>
+          </div>
           <div>
             {pictures.map(function (element) {
               return (
                 <div className="insta-pic-container">
                   {element.media_type === "IMAGE" && (
-                    <img className="insta-pic" src={element.media_url}></img>
+                    <span>
+                      <Button className="add-btn btn-success">Import</Button>
+                      <img className="insta-pic" src={element.media_url}></img>
+                    </span>
+                  )}
+                  {element.media_type === "CAROUSEL_ALBUM" && (
+                    <Button
+                      className="album-btn"
+                      onClick={() => {
+                        toggleAlbum(element.id);
+                      }}
+                    >
+                      <FontAwesomeIcon icon={faImages} />
+                    </Button>
                   )}
                   {element.media_type === "CAROUSEL_ALBUM" &&
                     openAlbums.find((e) => e.id == element.id) == undefined && (
@@ -117,11 +134,16 @@ function UserProfile() {
                             .find((e) => e.id == element.id)
                             .contents.map(function (img) {
                               return (
-                                <img
-                                  className="album-pic"
-                                  src={img.media_url}
-                                  width="200"
-                                ></img>
+                                <div className="album-pic-container">
+                                  <Button className="album-add-btn btn-success">
+                                    Import
+                                  </Button>
+                                  <img
+                                    className="album-pic"
+                                    src={img.media_url}
+                                    width="200"
+                                  ></img>
+                                </div>
                               );
                             })}
                         </div>
@@ -129,16 +151,6 @@ function UserProfile() {
                     )}
                   <div>
                     <span>{element.caption}</span>
-                    {element.media_type === "CAROUSEL_ALBUM" && (
-                      <Button
-                        className="album-btn"
-                        onClick={() => {
-                          toggleAlbum(element.id);
-                        }}
-                      >
-                        <FontAwesomeIcon icon={faImages} />
-                      </Button>
-                    )}
                   </div>
                 </div>
               );
