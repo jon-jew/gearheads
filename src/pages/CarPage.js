@@ -1,5 +1,5 @@
 import React from 'react';
-import Navbar from '../components/Navbar.js';
+import Navbar from '../components/navbar/Navbar.js';
 import Sidebar from '../components/Sidebar.js';
 import CarHeader from '../components/carPage/CarHeader.js';
 import LikeButton from '../components/LikeButton.js'

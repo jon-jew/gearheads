@@ -1,0 +1,49 @@
+.nav {
+    z-index: 900;
+    background: #111111;
+    text-align: center;
+    height: 80px;
+  }
+  .navbar-home {
+    height: 165px;
+  }
+  
+  .navbar-items {
+    display: inline-block;
+  }
+  
+  #navbar-login {
+    text-decoration: none;
+    font-family: Overpass;
+    font-weight: 600;
+    text-align: left;
+    letter-spacing: 1px;
+    color: #fff;
+    position: absolute;
+    right: 100px;
+    top: 30px;
+  }
+  
+  .title {
+    margin-top: 20px;
+    margin-left: 20px;
+  }
+  
+  #gear {
+    color: #fff;
+    background: rgb(105, 33, 21);
+    font-family: Overpass;
+    font-weight: 200;
+    font-size: 20pt;
+    margin-top: 0px;
+    margin-right: 5px;
+    padding: 10px 7px;
+    border-right: solid 2px #fff;
+  }
+  
+  #heads {
+    font-family: Overpass;
+    color: #fff;
+    font-weight: 900;
+    font-size: 20pt;
+  }

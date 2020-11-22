@@ -1,6 +1,6 @@
 import React from 'react';
 
-import CarCardGrad from './CarCard.js'
+import CarCardGrad from './CarCard/CarCard.js'
 import pic from '../mr2.jpg';
 import pic2 from '../download.jpg';
 
