@@ -24,16 +24,12 @@ function Picture() {
       >
         Caption
       </div>
-      <Modal
-        show={show}
-        onHide={handleClose}
-        keyboard={false}
-        size="lg"
-      >
+      <Modal show={show} onHide={handleClose} keyboard={false} size="lg">
         <Modal.Body className="picture-modal">
-          <div style={background} className="picture-exp-large">
-            {" "}
-          </div>
+          <img
+            className="car-modal-picture"
+            src="http://speedhunters-wp-production.s3.amazonaws.com/wp-content/uploads/2017/01/23200823/DSC09986N-1200x800.jpg"
+          />
         </Modal.Body>
         <Modal.Footer className="picture-modal">
           <Button variant="secondary" onClick={handleClose}>

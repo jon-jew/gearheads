@@ -29,7 +29,7 @@ class CarCardGrad extends React.Component {
             <br />
             {this.props.car}
             <div className="car-user">
-              <i className="fas fa-user"></i> USERNAME
+              <i className="fas fa-user"></i> SPEEDYSPEEDBOI
             </div>
           </div>
         </div>

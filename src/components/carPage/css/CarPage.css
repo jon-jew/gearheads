@@ -59,6 +59,10 @@
     height: calc(100vh - 80px);
     min-height: 650px;
   }
+
+  .car-modal-picture {
+    width: 100%;
+  }
   
   .header-photo {
     width: 100%;
@@ -112,12 +116,10 @@
   
   .right-footer {
     color: #000;
-    float: right;
     overflow: scroll;
     overflow-x: hidden;
     background: #fff;
     text-align: center;
-    width: calc(100% - 600px);
     height: calc(100vh - 80px);
   }
   
@@ -129,8 +131,9 @@
     display: inline-block;
   }
   
-  .picture-container {
+  .pic-container {
     display: table;
+    width: 100%;
   }
 
   .picture-exp-small {

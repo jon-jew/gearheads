@@ -24,34 +24,12 @@ const handleClick = () => {
   });
 };
 
-const clickTest = () => {
-  console.log("test");
-};
-
 function CarHeader() {
   const carfooter = useRef(null);
 
-  const [lastScrollTop, setLastScrollTop] = useState(0);
-  const [bodyOffset, setBodyOffset] = useState(
-    document.body.getBoundingClientRect()
-  );
-  const [scrollY, setScrollY] = useState(bodyOffset.top);
-  const [scrollX, setScrollX] = useState(bodyOffset.left);
-  const [scrollDirection, setScrollDirection] = useState();
-  const [isScrolling, setScrolling] = useState();
   const [like, setLike] = useState(false);
   const [hover, setHover] = useState(false);
 
-  function setScroll() {
-    var page = document.getElementById("page");
-    setBodyOffset(page.getBoundingClientRect());
-    setScrollY(-bodyOffset.top);
-    setScrollX(bodyOffset.left);
-    setScrollDirection(lastScrollTop > -bodyOffset.top ? "down" : "up");
-    var temp = lastScrollTop != -bodyOffset.top;
-    setScrolling(temp);
-    setLastScrollTop(-bodyOffset.top);
-  }
 
   function likeClick() {
     setLike(!like);
@@ -60,49 +38,6 @@ function CarHeader() {
   function likeHover() {
     setHover(!hover);
   }
-
-  function scrollPromise() {
-    return new Promise((resolve, reject) => {
-      scroller.scrollTo("car-footer", {
-        duration: 1500,
-        smooth: true,
-      });
-
-      setTimeout(() => resolve(), 3000);
-    });
-  }
-
-  const listener = (e) => {
-    console.log("1");
-    setScroll();
-    if (scrollY === 0 && scrollDirection === "up") {
-      var promise = scrollPromise();
-      promise.then((successMessage) => {
-        console.log("promise  resolved");
-        console.log("2");
-        setScroll();
-      });
-    }
-    //console.log(scrollY + '/' + carfooter.current.offsetTop);
-    // var page = document.getElementById("page");
-    // var footer = document.getElementById("123");
-
-    // if (footer.getBoundingClientRect().top > 80 && scrollDirection === 'down') {
-    //   console.log('hit');
-    //   scroll.scrollTo(0);
-    // }
-    else {
-      console.log("scrolling...");
-      setScroll();
-    }
-  };
-
-  useEffect(() => {
-    window.addEventListener("scroll", listener);
-    return () => {
-      window.removeEventListener("scroll", listener);
-    };
-  });
 
   return (
     <div className="car-header" id="page">
@@ -150,7 +85,7 @@ function CarHeader() {
               <br />
               <strong>MITSUBISHI</strong>
               <br />
-              STARION ESI-R
+              STARION GSR-VR
             </div>
             <div className="car-description">
               End of Year (2018) Update: Unfortunately 2018 wasn't the year I
@@ -197,7 +132,7 @@ function CarHeader() {
               </strong>{" "}
               | <i className="fas fa-thumbtack"></i>
             </div>
-            <div className="picture-container">
+            <div className="pic-container">
               {/* <div className="month">
                 <div className="timeline">MAR 2020</div>
                 <div className="picture-container"></div>
