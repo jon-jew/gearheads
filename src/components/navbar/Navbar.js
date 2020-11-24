@@ -12,7 +12,7 @@ class Nb extends React.Component {
   render() {
     return (
       <Navbar sticky="top" className="nav">
-        <Navbar.Brand class="title">
+        <Navbar.Brand>
           <span id="gear">GEAR</span>
           <span id="heads">HEADS</span>
         </Navbar.Brand>

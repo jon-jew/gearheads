@@ -8,15 +8,13 @@ import {
 
 import "./CarCard.css";
 
-const background = {
-  backgroundPosition: "center",
-  backgroundRepeat: "no-repeat",
-  backgroundSize: "cover",
-  backgroundImage:
-    "url(http://speedhunters-wp-production.s3.amazonaws.com/wp-content/uploads/2017/01/23203248/DSC09946NN-1200x800.jpg)",
-};
-
-function CarCardGrad({ year, car }) {
+function CarCardGrad({ year, car, pic }) {
+  const background = {
+    backgroundPosition: "center",
+    backgroundRepeat: "no-repeat",
+    backgroundSize: "cover",
+    backgroundImage: `url(${pic})`,
+  };
   return (
     <Link to="/carpage" className="car-card">
       <div className="card-overlay">
