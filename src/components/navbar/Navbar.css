@@ -24,9 +24,9 @@
     top: 30px;
   }
   
-  .title {
-    margin-top: 20px;
-    margin-left: 20px;
+  .navbar-brand {
+    margin-top: 8px;
+    margin-left: 89px;
   }
   
   #gear {

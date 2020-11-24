@@ -24,13 +24,13 @@ p {
   margin-top: 15px;
   outline: none;
   transition-property: color;
-  transition-property: font-size;
+  transition-property: all;
   transition-duration: 0.25s;
 }
 
 .menu-item:hover {
-  color: #c6b495;
-  font-size: 15pt;
+  color: #FFF;
+  text-decoration: none;
 }
 
 .list-icon {

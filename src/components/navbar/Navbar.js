@@ -7,6 +7,7 @@ import {
   NavLink,
 } from "react-router-dom";
 import { Navbar } from "react-bootstrap";
+
 class Nb extends React.Component {
   render() {
     return (

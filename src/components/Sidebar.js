@@ -24,23 +24,23 @@ class Sidebar extends React.Component {
           to="/home"
           id="home"
           className="menu-item"
-          activeStyle={{ color: "#c6b495" }}
+          activeStyle={{ color: "#FFF" }}
         >
           <i class="list-icon fas fa-home"></i> HOME
         </NavLink>
         <NavLink
-          to="/explore/"
+          to="/user/"
           id="explore"
           className="menu-item"
-          activeStyle={{ color: "#c6b495" }}
+          activeStyle={{ color: "#FFF" }}
         >
-          <i class="list-icon fas fa-binoculars"></i> EXPLORE
+          <i class="list-icon fas fa-binoculars"></i> MY PROFILE
         </NavLink>
         <NavLink
           to="/garage/"
           id="my-garage"
           className="menu-item"
-          activeStyle={{ color: "#c6b495" }}
+          activeStyle={{ color: "#FFF" }}
         >
           <i class="list-icon fas fa-warehouse"></i> MY GARAGE
         </NavLink>
@@ -58,6 +58,7 @@ var styles = {
     height: "30px",
     left: "36px",
     top: "25px",
+    zIndex: "100000",
   },
   bmBurgerBars: {
     background: "#FFF",
@@ -94,6 +95,7 @@ var styles = {
 
   bmOverlay: {
     zIndex: "1000000",
+    opacity: "1",
     background: "rgba(0, 0, 0, 0.3)",
   },
 };
