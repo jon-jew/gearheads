@@ -1,6 +1,7 @@
 import React, { Component, useRef, useEffect, useState } from "react";
 import * as Scroll from "react-scroll";
 import "./css/CarPage.css";
+import CarPicture from "./CarPicture";
 import { Row, Col } from "react-bootstrap";
 
 var Element = Scroll.Element;
@@ -13,7 +14,7 @@ var styles = {
   backgroundRepeat: "no-repeat",
   backgroundSize: "cover",
   backgroundImage:
-    "url(https://upload.wikimedia.org/wikipedia/commons/thumb/d/d8/Nissan350Z-01.jpg/1280px-Nissan350Z-01.jpg)",
+    "url(http://speedhunters-wp-production.s3.amazonaws.com/wp-content/uploads/2017/01/23203248/DSC09946NN-1200x800.jpg)",
 };
 
 const handleClick = () => {
@@ -196,15 +197,20 @@ function CarHeader() {
               </strong>{" "}
               | <i className="fas fa-thumbtack"></i>
             </div>
-            <div className="month">
-              <div className="timeline">MAR 2020</div>
-              <div className="picture-container"></div>
-              <br />
-            </div>
-            <div className="month">
-              <div className="timeline">MAR 2020</div>
-              <div className="picture-container"></div>
-              <br />
+            <div className="picture-container">
+              {/* <div className="month">
+                <div className="timeline">MAR 2020</div>
+                <div className="picture-container"></div>
+                <br />
+              </div>
+              <div className="month">
+                <div className="timeline">MAR 2020</div>
+                <div className="picture-container"></div>
+                <br />
+              </div> */}
+              <CarPicture />
+              <CarPicture />
+              <CarPicture />
             </div>
           </Col>
         </Row>

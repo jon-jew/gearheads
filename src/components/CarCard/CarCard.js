@@ -13,7 +13,7 @@ const background = {
   backgroundRepeat: "no-repeat",
   backgroundSize: "cover",
   backgroundImage:
-    "url(https://upload.wikimedia.org/wikipedia/commons/thumb/d/d8/Nissan350Z-01.jpg/1280px-Nissan350Z-01.jpg)",
+    "url(http://speedhunters-wp-production.s3.amazonaws.com/wp-content/uploads/2017/01/23203248/DSC09946NN-1200x800.jpg)",
 };
 
 class CarCardGrad extends React.Component {

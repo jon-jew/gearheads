@@ -1,21 +1,48 @@
-import React, { Component, useRef, useEffect, useState } from 'react';
+import React, { Component, useRef, useEffect, useState } from "react";
+import { Modal, Button } from "react-bootstrap";
+
+const background = {
+  backgroundPosition: "center",
+  backgroundRepeat: "no-repeat",
+  backgroundSize: "cover",
+  backgroundImage:
+    "url(http://speedhunters-wp-production.s3.amazonaws.com/wp-content/uploads/2017/01/23200823/DSC09986N-1200x800.jpg)",
+};
 
 function Picture() {
-    const [clicked, setClicked] = useState(false);
+  const [show, setShow] = useState(false);
 
-    const onClick = () => {
-        console.log(clicked);
-        setClicked(!clicked);
-    }
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
 
-    return(
-        <div className='inlineBlock'>
-            {clicked == true &&
-                <div>hi there</div>
-            }
-            <div onClick={onClick} className = {(clicked ? 'picture-exp-large' : 'picture-exp-small')}>pp</div>
-        </div>
-    );
+  return (
+    <>
+      <div
+        onClick={handleShow}
+        style={background}
+        className="picture-exp-small"
+      >
+        Caption
+      </div>
+      <Modal
+        show={show}
+        onHide={handleClose}
+        keyboard={false}
+        size="lg"
+      >
+        <Modal.Body className="picture-modal">
+          <div style={background} className="picture-exp-large">
+            {" "}
+          </div>
+        </Modal.Body>
+        <Modal.Footer className="picture-modal">
+          <Button variant="secondary" onClick={handleClose}>
+            Close
+          </Button>
+        </Modal.Footer>
+      </Modal>
+    </>
+  );
 }
 
 export default Picture;

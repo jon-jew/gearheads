@@ -39,8 +39,8 @@ p {
 }
 
 .welcome {
-  padding-top: 180px;
-  color: #fff;
+  padding-top: 10px;
+  color: rgb(46, 46, 46);
 }
 
 .searchbar {
