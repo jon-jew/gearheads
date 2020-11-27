@@ -51,6 +51,7 @@ function CarHeader() {
           <a className="down-button" onClick={handleClick}>
             <i class="fas fa-chevron-circle-down"></i>
           </a>
+          <div className="chassis-code">EA11R</div>
         </div>
       </div>
       <Element name="car-footer" className="car-footer">
@@ -86,6 +87,40 @@ function CarHeader() {
               <br />
               STARION GSR-VR
             </div>
+            <Row className="car-stats-row">
+              <Col>
+                <span className="car-card-stat">Power</span>
+                <br />
+                250 HP
+              </Col>
+              <Col>
+                <span className="car-card-stat">Torque</span>
+                <br />
+                250 FT/LB
+              </Col>
+              <Col>
+                <span className="car-card-stat">Weight</span>
+                <br />
+                2800 LBS
+              </Col>
+            </Row>
+            <Row className="car-stats-row footer-row">
+              <Col>
+                <span className="car-card-stat">Engine</span>
+                <br />
+                2.6 L 4G54
+              </Col>
+              <Col>
+                <span className="car-card-stat">Layout</span>
+                <br />
+                FR
+              </Col>
+              <Col>
+                <span className="car-card-stat">Chassis</span>
+                <br />
+                A187A
+              </Col>
+            </Row>
             <div className="car-description">
               End of Year (2018) Update: Unfortunately 2018 wasn't the year I
               was hoping for with the car. I made a lot of really great but huge
@@ -125,12 +160,12 @@ function CarHeader() {
             </div>
           </Col>
           <Col xs={8} className="right-footer">
-            <div className="timeline-header">
+            {/* <div className="timeline-header">
               <strong>
                 <i className="far fa-calendar"></i>
               </strong>{" "}
               | <i className="fas fa-thumbtack"></i>
-            </div>
+            </div> */}
             <div className="pic-container">
               {/* <div className="month">
                 <div className="timeline">MAR 2020</div>

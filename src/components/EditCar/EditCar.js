@@ -174,6 +174,7 @@ export default function EditCarForm({}) {
                     placeholder="Model Year"
                     value={year}
                   >
+                    <option value="" disabled selected>Year</option>
                     {years.map((modelYear) => (
                       <option>{modelYear}</option>
                     ))}
@@ -189,6 +190,7 @@ export default function EditCarForm({}) {
                     placeholder="Make"
                     value={make}
                   >
+                    <option value="" disabled selected>Make</option>
                     {CAR_MODELS.map((model) => (
                       <option>{model.brand}</option>
                     ))}
@@ -204,6 +206,7 @@ export default function EditCarForm({}) {
                     placeholder="Model"
                     value={model}
                   >
+                    <option value="" disabled selected>Model</option>
                     {models.map((model) => (
                       <option>{model}</option>
                     ))}

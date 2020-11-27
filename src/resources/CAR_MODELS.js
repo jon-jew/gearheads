@@ -365,7 +365,8 @@ export default [
       "brand": "Daihatsu",
       "models": [
         "Charade",
-        "Rocky"
+        "Rocky",
+        "Mira"
       ]
     },
     {
@@ -1407,6 +1408,8 @@ export default [
       "brand": "Suzuki",
       "models": [
         "Aerio",
+        "Alto",
+        "Cappuccino",
         "Equator",
         "Esteem",
         "Forenza",
