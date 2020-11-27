@@ -71,9 +71,11 @@ function CarCardGrad({ year, car }) {
           </Col>
         </Row>
         <div>
-          <Button className="edit-car-btn">
-            <FontAwesomeIcon icon={faCog} />
-          </Button>
+          <Link to="/editcar">
+            <Button className="edit-car-btn">
+              <FontAwesomeIcon icon={faCog} />
+            </Button>
+          </Link>
         </div>
       </div>
     </div>

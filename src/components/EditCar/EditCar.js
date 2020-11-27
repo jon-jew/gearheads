@@ -7,8 +7,9 @@ import { faImages, faPlusSquare } from "@fortawesome/free-regular-svg-icons";
 import { faUpload } from "@fortawesome/free-solid-svg-icons";
 import { Row, Col, Form, FormControl, Modal, Button } from "react-bootstrap";
 import "./EditCar.css";
+import CAR_MODELS from "../../resources/CAR_MODELS";
 
-import CarPicture from '../carPage/CarPicture.js';
+import CarPicture from "../carPage/CarPicture.js";
 
 // Increase pixel density for crop preview quality on retina screens.
 const pixelRatio = window.devicePixelRatio || 1;
@@ -41,6 +42,8 @@ export default function EditCarForm({}) {
   const [year, setYear] = useState("");
   const [make, setMake] = useState("");
   const [model, setModel] = useState("");
+  const [models, setModels] = useState([]);
+  const [trim, setTrim] = useState("");
   const [preview, setPreview] = useState(false);
 
   const [images, setImages] = React.useState([]);
@@ -49,6 +52,13 @@ export default function EditCarForm({}) {
     // data for submit
     console.log(imageList, addUpdateIndex);
     setImages(imageList);
+  };
+
+  const onMakeChange = (make) => {
+    const newModels = CAR_MODELS.find((e) => e.brand === make).models;
+    setMake(make);
+    setModels(newModels);
+    setModel(newModels[0]);
   };
 
   function generateDownload(previewCanvas, crop) {
@@ -82,6 +92,12 @@ export default function EditCarForm({}) {
     backgroundImage: `url(${previewPic})`,
   };
 
+  const years = [];
+
+  for (let i = new Date().getFullYear() + 1; i > 1910; i--) {
+    years.push(i);
+  }
+
   const [upImg, setUpImg] = useState();
   const imgRef = useRef(null);
   const previewCanvasRef = useRef(null);
@@ -114,7 +130,6 @@ export default function EditCarForm({}) {
 
     const scaleX = image.naturalWidth / image.width;
     const scaleY = image.naturalHeight / image.height;
-    console.log(scaleX, scaleY);
     const ctx = canvas.getContext("2d");
 
     canvas.width = crop.width * pixelRatio;
@@ -152,37 +167,57 @@ export default function EditCarForm({}) {
                 <Col sm={1}>
                   <Form.Control
                     size="lg"
-                    type="number"
-                    min="1900"
-                    max="2030"
-                    step="1"
-                    maxlength="4"
+                    as="select"
                     onChange={(e) => {
                       setYear(e.target.value);
                     }}
                     placeholder="Model Year"
-                  />
+                    value={year}
+                  >
+                    {years.map((modelYear) => (
+                      <option>{modelYear}</option>
+                    ))}
+                  </Form.Control>
                 </Col>
                 <Col sm={2}>
                   <Form.Control
+                    as="select"
                     size="lg"
                     onChange={(e) => {
-                      setMake(e.target.value);
+                      onMakeChange(e.target.value);
                     }}
                     placeholder="Make"
-                  />
+                    value={make}
+                  >
+                    {CAR_MODELS.map((model) => (
+                      <option>{model.brand}</option>
+                    ))}
+                  </Form.Control>
                 </Col>
                 <Col sm={2}>
                   <Form.Control
+                    as="select"
                     size="lg"
                     onChange={(e) => {
                       setModel(e.target.value);
                     }}
                     placeholder="Model"
-                  />
+                    value={model}
+                  >
+                    {models.map((model) => (
+                      <option>{model}</option>
+                    ))}
+                  </Form.Control>
                 </Col>
                 <Col sm={1}>
-                  <Form.Control size="lg" placeholder="Trim" />
+                  <Form.Control
+                    size="lg"
+                    placeholder="Trim"
+                    value={trim}
+                    onChange={(e) => {
+                      setTrim(e.target.value);
+                    }}
+                  />
                 </Col>
               </Form.Row>
             </Form>
@@ -248,7 +283,7 @@ export default function EditCarForm({}) {
                 }) => (
                   // write your building UI
                   <div className="upload__image-wrapper">
-                    Image Gallery 
+                    Image Gallery
                     <Button
                       style={isDragging ? { color: "red" } : null}
                       onClick={onImageUpload}
@@ -293,11 +328,11 @@ export default function EditCarForm({}) {
                     <i className="fas fa-user"></i> Speedy Speed Boi's
                     <br />
                   </span>
-                  1988
+                  {year}
                   <br />
-                  <strong>MITSUBISHI</strong>
+                  <strong>{make}</strong>
                   <br />
-                  STARION GSR-VR
+                  {model} {trim}
                 </div>
                 <input className="car-description"></input>
               </Col>
