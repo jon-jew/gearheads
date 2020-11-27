@@ -1,19 +1,23 @@
 import React, { Component, useRef, useEffect, useState } from "react";
 import { Modal, Button } from "react-bootstrap";
 
-const background = {
-  backgroundPosition: "center",
-  backgroundRepeat: "no-repeat",
-  backgroundSize: "cover",
-  backgroundImage:
-    "url(http://speedhunters-wp-production.s3.amazonaws.com/wp-content/uploads/2017/01/23200823/DSC09986N-1200x800.jpg)",
-};
 
-function Picture() {
+
+function Picture({ pic }) {
   const [show, setShow] = useState(false);
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
+
+  const background = {
+    backgroundPosition: "center",
+    backgroundRepeat: "no-repeat",
+    backgroundSize: "cover",
+    backgroundImage:
+      `url(${pic})`,
+  };
+
+  console.log(pic);
 
   return (
     <>
@@ -28,7 +32,7 @@ function Picture() {
         <Modal.Body className="picture-modal">
           <img
             className="car-modal-picture"
-            src="http://speedhunters-wp-production.s3.amazonaws.com/wp-content/uploads/2017/01/23200823/DSC09986N-1200x800.jpg"
+            src={pic}
           />
         </Modal.Body>
         <Modal.Footer className="picture-modal">

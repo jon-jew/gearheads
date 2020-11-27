@@ -1,7 +1,59 @@
 .edit-car-form {
-    margin-top: 10px;
     padding: 20px;
+    padding-top: 30px;
     text-align: center;
     margin-right: auto;
     margin-left: auto;
+    font-family: Overpass;
+}
+
+.car-model {
+    margin-bottom: 30px;
+}
+
+.file-upload {
+    margin-bottom: 10px;
+}
+
+#crop-preview {
+    display: none;
+}
+
+.ReactCrop__image {
+    max-height: 1000px;
+}
+
+.upload-preview {
+    display: none;
+}
+
+.image-upload-container {
+    min-height: calc(100vh - 80px);
+}
+
+.preview-header {
+    font-size: 20px;
+    margin-bottom: 0px;
+}
+
+.preview-container .car-card {
+    margin-top: 0px;
+}
+
+.preview-btn {
+    margin-top: 15px;
+    float: right;
+    margin-right: 20px;
+}
+
+.save-btn {
+    margin-top: 15px;
+
+    float: right;
+    margin-right: 10px;
+}
+
+.image-item {
+    display: inline-block;
+    margin-left: 15px;
 }

@@ -30,7 +30,6 @@ function CarHeader() {
   const [like, setLike] = useState(false);
   const [hover, setHover] = useState(false);
 
-
   function likeClick() {
     setLike(!like);
   }
@@ -143,9 +142,9 @@ function CarHeader() {
                 <div className="picture-container"></div>
                 <br />
               </div> */}
-              <CarPicture />
-              <CarPicture />
-              <CarPicture />
+              <CarPicture pic="http://speedhunters-wp-production.s3.amazonaws.com/wp-content/uploads/2017/01/23200823/DSC09986N-1200x800.jpg" />
+              <CarPicture pic="http://speedhunters-wp-production.s3.amazonaws.com/wp-content/uploads/2017/01/23200823/DSC09986N-1200x800.jpg" />
+              <CarPicture pic="http://speedhunters-wp-production.s3.amazonaws.com/wp-content/uploads/2017/01/23200823/DSC09986N-1200x800.jpg" />
             </div>
           </Col>
         </Row>

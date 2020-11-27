@@ -28,7 +28,7 @@ class CarCardContainer extends React.Component {
         <CarCardGrad
           year={"2003"}
           car={"HONDA INTEGRA TYPE R"}
-          pic="https://cdn.motor1.com/images/mgl/y8Krb/s1/honda-integra-type-r-dc5.jpg"
+          pic="https://images.squarespace-cdn.com/content/v1/52d46dd9e4b0f63bcb07fa01/1463443586970-L33PR7Y7HBK976FITWM3/ke17ZwdGBToddI8pDm48kJNtMxC3rDmQuOI55F2ErCx7gQa3H78H3Y0txjaiv_0fLkOtoHUu4B9R8Nt6NbetHSV9WTgWwfk9yasjiNkB2fTCymRobbOSc4QzIFcHiIlrOqpeNLcJ80NK65_fV7S1UbG40Do1_0TucbEFNxg42hd4eb73n72px0CKWDW9DnoxfwcHgyDlTH9Ywc0XQb4vJw/Header+%281+of+1%29.jpg?format=2500w"
         />
         <CarCardGrad
           year={"1993"}

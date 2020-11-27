@@ -33,6 +33,7 @@
   }
   
   .car-header-model {
+    text-transform: uppercase;
     line-height: 7vw;
     padding-top: 26px;
   }
