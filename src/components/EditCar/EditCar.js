@@ -64,6 +64,7 @@ export default function EditCarForm({}) {
   const handleShow = () => setShow(true);
 
   const [images, setImages] = React.useState([]);
+  console.log(images);
   const maxNumber = 69;
   const onChange = (imageList, addUpdateIndex) => {
     // data for submit

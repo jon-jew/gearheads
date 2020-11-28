@@ -1,14 +1,17 @@
-import React from 'react';
-import Navbar from '../components/navbar/Navbar.js';
-import Sidebar from '../components/Sidebar.js';
-import CarHeader from '../components/carPage/CarHeader.js';
-import LikeButton from '../components/LikeButton.js'
+import React from "react";
+import Navbar from "../components/navbar/Navbar.js";
+import Sidebar from "../components/Sidebar.js";
+import CarHeader from "../components/carPage/CarHeader.js";
+import LikeButton from "../components/LikeButton.js";
+import axios from "axios";
 
-import '../css/App.css';
+import { getCars } from "../services/carServices.js";
 
-function CarPage(){
-  return(
-    <div className = "App">
+import "../css/App.css";
+
+function CarPage() {
+  return (
+    <div className="App">
       <div id="outer-container">
         <Sidebar />
         <Navbar />
@@ -24,14 +27,13 @@ function CarPage(){
           </a>
         </div> */}
         <main id="page-wrap">
-        <div class = "car-header-container">
-          <CarHeader />
-        </div>
+          <div className="car-header-container">
+            <CarHeader />
+          </div>
         </main>
       </div>
     </div>
   );
 }
-
 
 export default CarPage;
