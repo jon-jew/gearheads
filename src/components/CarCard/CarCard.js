@@ -25,10 +25,10 @@ function CarCardGrad({ year, car, pic }) {
           <span className="car-year">{year}</span>
           <br />
           {car}
-          <div className="car-user">
-            <i className="fas fa-user"></i> SPEEDYSPEEDBOI
-          </div>
         </div>
+        <span className="car-user">
+          <i className="fas fa-user"></i> SPEEDYSPEEDBOI
+        </span>
       </div>
       <div className="card-photo" style={background}></div>
     </Link>

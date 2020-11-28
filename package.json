@@ -5,6 +5,7 @@
   "dependencies": {
     "@csstools/normalize.css": "^10.1.0",
     "@fortawesome/fontawesome-svg-core": "^1.2.32",
+    "@fortawesome/free-brands-svg-icons": "^5.15.1",
     "@fortawesome/free-regular-svg-icons": "^5.15.1",
     "@fortawesome/free-solid-svg-icons": "^5.15.1",
     "@fortawesome/react-fontawesome": "^0.1.12",
@@ -29,6 +30,7 @@
     "react-router-scroll-top": "^0.2.1",
     "react-scripts": "3.0.1",
     "react-scroll": "^1.8.1",
+    "react-tag-input": "^6.4.3",
     "state": "^0.2.0",
     "typescript": "^3.9.7"
   },

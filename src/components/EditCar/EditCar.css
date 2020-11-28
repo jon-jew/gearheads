@@ -1,97 +1,130 @@
 .edit-car-form {
-    padding: 20px;
-    padding-top: 30px;
-    text-align: center;
-    margin-right: auto;
-    margin-left: auto;
-    font-family: Overpass;
+  padding: 20px;
+  padding-top: 30px;
+  text-align: center;
+  margin-right: auto;
+  margin-left: auto;
+  font-family: Overpass;
 }
 
 .edit-car-header {
-    text-align: left;
+  text-align: left;
+  padding-left: 20px;
+  font-size: 50px;
 }
 
 .car-model {
-    margin-bottom: 30px;
+  margin-bottom: 30px;
 }
 
 .file-upload {
-    margin-bottom: 10px;
+  margin-bottom: 10px;
 }
 
 #crop-preview {
-    display: none;
+  display: none;
 }
 
 .ReactCrop__image {
-    max-height: 1000px;
+  max-height: 1000px;
 }
 
 .upload-preview {
-    display: none;
+  display: none;
 }
 
 .image-upload-container {
-    min-height: calc(100vh - 80px);
+  min-height: calc(100vh - 80px);
 }
 
 .preview-header {
-    font-size: 20px;
-    margin-bottom: 0px;
+  font-size: 20px;
+  margin-bottom: 0px;
 }
 
 .preview-container .car-card {
-    margin-top: 0px;
+  margin-top: 0px;
 }
 
 .preview-btn {
-    margin-top: 15px;
-    float: right;
-    margin-right: 20px;
+  margin-top: 15px;
+  float: right;
+  margin-right: 20px;
 }
 
 .save-btn {
-    margin-top: 15px;
+  margin-top: 15px;
 
-    float: right;
-    margin-right: 10px;
+  float: right;
+  margin-right: 10px;
+}
+
+.btn-upload {
+  float: left;
+  margin-right: 10px;
 }
 
 .image-item {
-    display: inline-block;
-    margin-left: 15px;
+  display: inline-block;
+  margin-left: 15px;
+}
+
+.gallery-btn-container {
+  display: inline;
 }
 
 .chassis-code {
-    opacity: 0.2;
-    right: 0;
-    position: absolute;
+  opacity: 0.2;
+  right: 0;
+  position: absolute;
 }
 
 .car-stat-row {
-    margin-top: 10px;
-    margin-bottom: 10px;
+  margin-top: 10px;
+  margin-bottom: 10px;
 }
 
 .car-stat-prepend {
-    font-weight: bold !important;
-    background: #FFF;
+  font-weight: bold !important;
+  background: #fff;
 }
 
 .thumbnail-row {
-    margin-top: 60px;
+  background: rgb(231, 231, 231);
+  padding: 20px;
+  margin-right: 5px !important;
+  margin-left: 5px !important;
+  border-radius: 10px;
 }
 
 .car-model-form {
-    background: rgb(231, 231, 231);
-    padding: 20px;
-    border-radius: 10px;
+  background: rgb(231, 231, 231);
+  padding: 20px;
+  border-radius: 10px;
+  margin-bottom: 15px;
 }
 
 .gallery-container {
-    text-align: center;
-    margin-top: 20px;
-    width: 100%;
-    background: rgb(231, 231, 231);
-    padding: 20px;
+  text-align: center;
+  width: 100%;
+  background: rgb(231, 231, 231);
+  padding: 20px;
+  min-height: 300px;
+}
+
+.edit-container-header {
+  background: rgb(231, 231, 231);
+  width: 300px;
+  padding: 15px 5px 5px 5px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 0px;
+  margin-top: 20px;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+}
+
+.modal-90w {
+    width: 95% !important;
+    max-width: 100% !important;
 }

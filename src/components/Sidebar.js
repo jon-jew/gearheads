@@ -83,7 +83,7 @@ var styles = {
     padding: "2.5em 1.5em 0",
     fontSize: "1.15em",
     overflow: "hidden",
-    background: "#212121",
+    background: "#FFF",
   },
   bmMorphShape: {
     fill: "#373a47",

@@ -3,9 +3,6 @@ import Navbar from "../components/navbar/Navbar.js";
 import Sidebar from "../components/Sidebar.js";
 import CarHeader from "../components/carPage/CarHeader.js";
 import LikeButton from "../components/LikeButton.js";
-import axios from "axios";
-
-import { getCars } from "../services/carServices.js";
 
 import "../css/App.css";
 
