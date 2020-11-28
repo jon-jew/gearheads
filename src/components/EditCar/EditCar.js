@@ -3,9 +3,21 @@ import ReactCrop from "react-image-crop";
 import "react-image-crop/dist/ReactCrop.css";
 import ImageUploading from "react-images-uploading";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faImages, faPlusSquare } from "@fortawesome/free-regular-svg-icons";
-import { faUpload } from "@fortawesome/free-solid-svg-icons";
-import { Row, Col, Form, FormControl, Modal, Button } from "react-bootstrap";
+import {
+  faImages,
+  faPlusSquare,
+  faImage,
+} from "@fortawesome/free-regular-svg-icons";
+import { faUpload, faCarAlt, faCogs } from "@fortawesome/free-solid-svg-icons";
+import {
+  Row,
+  Col,
+  Form,
+  FormControl,
+  Modal,
+  Button,
+  InputGroup,
+} from "react-bootstrap";
 import "./EditCar.css";
 import CAR_MODELS from "../../resources/CAR_MODELS";
 
@@ -46,6 +58,11 @@ export default function EditCarForm({}) {
   const [trim, setTrim] = useState("");
   const [preview, setPreview] = useState(false);
 
+  const [show, setShow] = useState(false);
+
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
+
   const [images, setImages] = React.useState([]);
   const maxNumber = 69;
   const onChange = (imageList, addUpdateIndex) => {
@@ -66,7 +83,11 @@ export default function EditCarForm({}) {
       return;
     }
 
-    const canvas = getResizedCanvas(previewCanvas, crop.width, crop.height);
+    const canvas = getResizedCanvas(
+      previewCanvas,
+      crop.width * 2,
+      crop.height * 2
+    );
 
     canvas.toBlob(
       (blob) => {
@@ -132,12 +153,12 @@ export default function EditCarForm({}) {
     const scaleY = image.naturalHeight / image.height;
     const ctx = canvas.getContext("2d");
 
-    canvas.width = crop.width * pixelRatio;
-    canvas.height = crop.height * pixelRatio;
+    canvas.width = crop.width * pixelRatio * 2;
+    canvas.height = crop.height * pixelRatio * 2;
 
     ctx.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
-    ctx.imageSmoothingQuality = "high";
 
+    ctx.scale(2, 2);
     ctx.drawImage(
       image,
       crop.x * scaleX,
@@ -149,6 +170,7 @@ export default function EditCarForm({}) {
       crop.width,
       crop.height
     );
+
     generateDownload(previewCanvasRef.current, completedCrop);
   }, [completedCrop]);
 
@@ -160,9 +182,14 @@ export default function EditCarForm({}) {
       <Button className="btn-success save-btn">Save</Button>
       {!preview ? (
         <div className="edit-car-form">
-          <h1>EDIT CAR</h1>
+          <h1 className="edit-car-header">
+            <FontAwesomeIcon icon={faCarAlt} /> EDIT CAR
+          </h1>
           <div className="image-upload-container">
-            <Form>
+            <h2>
+              <FontAwesomeIcon icon={faCogs} /> Car Info
+            </h2>
+            <Form className="car-model-form">
               <Form.Row className="justify-content-md-center car-model">
                 <Col sm={1}>
                   <Form.Control
@@ -174,7 +201,9 @@ export default function EditCarForm({}) {
                     placeholder="Model Year"
                     value={year}
                   >
-                    <option value="" disabled selected>Year</option>
+                    <option value="" disabled selected>
+                      Year
+                    </option>
                     {years.map((modelYear) => (
                       <option>{modelYear}</option>
                     ))}
@@ -190,7 +219,9 @@ export default function EditCarForm({}) {
                     placeholder="Make"
                     value={make}
                   >
-                    <option value="" disabled selected>Make</option>
+                    <option value="" disabled selected>
+                      Make
+                    </option>
                     {CAR_MODELS.map((model) => (
                       <option>{model.brand}</option>
                     ))}
@@ -206,7 +237,9 @@ export default function EditCarForm({}) {
                     placeholder="Model"
                     value={model}
                   >
-                    <option value="" disabled selected>Model</option>
+                    <option value="" disabled selected>
+                      Model
+                    </option>
                     {models.map((model) => (
                       <option>{model}</option>
                     ))}
@@ -223,8 +256,134 @@ export default function EditCarForm({}) {
                   />
                 </Col>
               </Form.Row>
+              <Form.Row className="justify-content-md-center car-stat-row">
+                <Col lg={2}>
+                  <InputGroup>
+                    <InputGroup.Prepend>
+                      <InputGroup.Text className="car-stat-prepend">
+                        Power
+                      </InputGroup.Text>
+                    </InputGroup.Prepend>
+                    <FormControl
+                      placeholder="200"
+                      aria-label="Recipient's username"
+                      aria-describedby="basic-addon2"
+                    />
+                    <InputGroup.Append>
+                      <InputGroup.Text id="basic-addon2">HP</InputGroup.Text>
+                    </InputGroup.Append>
+                  </InputGroup>
+                </Col>
+
+                <Col lg={2}>
+                  <InputGroup>
+                    <InputGroup.Prepend>
+                      <InputGroup.Text className="car-stat-prepend">
+                        Torque
+                      </InputGroup.Text>
+                    </InputGroup.Prepend>
+                    <FormControl
+                      placeholder="150"
+                      aria-label="Recipient's username"
+                      aria-describedby="basic-addon2"
+                    />
+                    <InputGroup.Append>
+                      <InputGroup.Text id="basic-addon2">
+                        FT/LBS
+                      </InputGroup.Text>
+                    </InputGroup.Append>
+                  </InputGroup>
+                </Col>
+                <Col lg={2}>
+                  <InputGroup>
+                    <InputGroup.Prepend>
+                      <InputGroup.Text className="car-stat-prepend">
+                        Curb Weight
+                      </InputGroup.Text>
+                    </InputGroup.Prepend>
+                    <FormControl
+                      placeholder="2500"
+                      aria-label="Recipient's username"
+                      aria-describedby="basic-addon2"
+                    />
+                    <InputGroup.Append>
+                      <InputGroup.Text id="basic-addon2">LBS</InputGroup.Text>
+                    </InputGroup.Append>
+                  </InputGroup>
+                </Col>
+              </Form.Row>
+              <Form.Row className="justify-content-md-center car-stat-row">
+                <Col sm={2}>
+                  <InputGroup>
+                    <InputGroup.Prepend>
+                      <InputGroup.Text className="car-stat-prepend">
+                        Engine Code
+                      </InputGroup.Text>
+                    </InputGroup.Prepend>
+                    <FormControl
+                      placeholder="4AGE"
+                      aria-label="Recipient's username"
+                      aria-describedby="basic-addon2"
+                    />
+                  </InputGroup>
+                </Col>
+                <Col sm={3}>
+                  <InputGroup>
+                    <InputGroup.Prepend>
+                      <InputGroup.Text className="car-stat-prepend">
+                        Engine Displacement
+                      </InputGroup.Text>
+                    </InputGroup.Prepend>
+                    <FormControl
+                      placeholder="2"
+                      aria-label="Recipient's username"
+                      aria-describedby="basic-addon2"
+                    />
+                    <InputGroup.Append>
+                      <InputGroup.Text id="basic-addon2">L</InputGroup.Text>
+                    </InputGroup.Append>
+                  </InputGroup>
+                </Col>
+                <Col sm={3}>
+                  <InputGroup>
+                    <InputGroup.Prepend>
+                      <InputGroup.Text className="car-stat-prepend">
+                        Drivetrain Layout
+                      </InputGroup.Text>
+                    </InputGroup.Prepend>
+                    <FormControl as="select">
+                      <option>Front Engine RWD</option>
+                      <option>Front Engine FWD</option>
+                      <option>Mid Engine RWD</option>
+                      <option>Rear Engine RWD</option>
+                    </FormControl>
+                  </InputGroup>
+                </Col>
+                <Col sm={2}>
+                  <InputGroup>
+                    <InputGroup.Prepend>
+                      <InputGroup.Text className="car-stat-prepend">
+                        Chassis Code
+                      </InputGroup.Text>
+                    </InputGroup.Prepend>
+                    <FormControl
+                      placeholder="AE86"
+                      aria-label="Recipient's username"
+                      aria-describedby="basic-addon2"
+                    />
+                  </InputGroup>
+                </Col>
+              </Form.Row>
+              <Form.Row className="justify-content-md-center car-stat-row">
+                <Col sm={6}>
+                  <Form.Group controlId="exampleForm.ControlTextarea1">
+                    <Form.Label>Description</Form.Label>
+                    <Form.Control as="textarea" rows={3} />
+                  </Form.Group>
+                </Col>
+              </Form.Row>
             </Form>
-            <Row>
+            <Row className="thumbnail-row">
               <Col s="10">
                 <div className="file-upload">
                   <input type="file" accept="image/*" onChange={onSelectFile} />
@@ -238,17 +397,19 @@ export default function EditCarForm({}) {
                   keepSelection
                 />
                 <canvas
-                  className="upload-preview"
                   ref={previewCanvasRef}
+                  className="upload-preview"
                   // Rounding is important so the canvas width and height matches/is a multiple for sharpness.
-                  style={{
-                    width: Math.round(completedCrop?.width ?? 0),
-                    height: Math.round(completedCrop?.height ?? 0),
-                  }}
+                  // style={{
+                  //   width: Math.round(completedCrop?.width ?? 0),
+                  //   height: Math.round(completedCrop?.height ?? 0),
+                  // }}
                 />
               </Col>
               <Col s="2" className="preview-container">
-                <h3 className="preview-header">THUMBNAIL PREVIEW</h3>
+                <h3 className="preview-header">
+                  <FontAwesomeIcon icon={faImage} /> THUMBNAIL PREVIEW
+                </h3>
                 <div className="car-card">
                   <div className="card-overlay">
                     <div className="card-like">
@@ -267,47 +428,52 @@ export default function EditCarForm({}) {
                 </div>
               </Col>
             </Row>
-            <Row>
-              <ImageUploading
-                multiple
-                value={images}
-                onChange={onChange}
-                maxNumber={maxNumber}
-                dataURLKey="data_url"
-              >
-                {({
-                  imageList,
-                  onImageUpload,
-                  onImageRemoveAll,
-                  onImageUpdate,
-                  onImageRemove,
-                  isDragging,
-                  dragProps,
-                }) => (
-                  // write your building UI
-                  <div className="upload__image-wrapper">
-                    Image Gallery
-                    <Button
-                      style={isDragging ? { color: "red" } : null}
-                      onClick={onImageUpload}
-                      {...dragProps}
-                    >
-                      <FontAwesomeIcon icon={faUpload} />
-                    </Button>
-                    <br />
-                    {imageList.map((image, index) => (
-                      <div key={index} className="image-item">
-                        <img src={image.data_url} alt="" width="300" />
-                        <div className="image-item__btn-wrapper">
-                          <Button onClick={() => onImageRemove(index)}>
-                            Remove
-                          </Button>
+            <Row className="gallery-row">
+              <div className="gallery-container">
+                <h2>
+                  <FontAwesomeIcon icon={faImages} /> Gallery
+                </h2>
+                <ImageUploading
+                  multiple
+                  value={images}
+                  onChange={onChange}
+                  maxNumber={maxNumber}
+                  dataURLKey="data_url"
+                >
+                  {({
+                    imageList,
+                    onImageUpload,
+                    onImageRemoveAll,
+                    onImageUpdate,
+                    onImageRemove,
+                    isDragging,
+                    dragProps,
+                  }) => (
+                    // write your building UI
+                    <div className="upload__image-wrapper">
+                      <Button
+                        style={isDragging ? { color: "red" } : null}
+                        onClick={onImageUpload}
+                        {...dragProps}
+                      >
+                        <FontAwesomeIcon icon={faUpload} />
+                      </Button>{" "}
+                      <br />
+                      <br />
+                      {imageList.map((image, index) => (
+                        <div key={index} className="image-item">
+                          <img src={image.data_url} alt="" width="300" />
+                          <div className="image-item__btn-wrapper">
+                            <Button onClick={() => onImageRemove(index)}>
+                              Remove
+                            </Button>
+                          </div>
                         </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </ImageUploading>
+                      ))}
+                    </div>
+                  )}
+                </ImageUploading>
+              </div>
             </Row>
           </div>
         </div>

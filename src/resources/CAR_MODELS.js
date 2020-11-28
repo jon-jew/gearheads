@@ -779,6 +779,7 @@ export default [
         "Countach",
         "Diablo",
         "Gallardo",
+        "Huracan",
         "Jalpa",
         "LM002",
         "Murcielago"
@@ -1134,6 +1135,7 @@ export default [
         "Lancer",
         "Lancer Evolution",
         "Mighty Max",
+        "Minica",
         "Mirage",
         "Montero",
         "Montero Sport",

@@ -7,6 +7,10 @@
     font-family: Overpass;
 }
 
+.edit-car-header {
+    text-align: left;
+}
+
 .car-model {
     margin-bottom: 30px;
 }
@@ -62,4 +66,32 @@
     opacity: 0.2;
     right: 0;
     position: absolute;
+}
+
+.car-stat-row {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.car-stat-prepend {
+    font-weight: bold !important;
+    background: #FFF;
+}
+
+.thumbnail-row {
+    margin-top: 60px;
+}
+
+.car-model-form {
+    background: rgb(231, 231, 231);
+    padding: 20px;
+    border-radius: 10px;
+}
+
+.gallery-container {
+    text-align: center;
+    margin-top: 20px;
+    width: 100%;
+    background: rgb(231, 231, 231);
+    padding: 20px;
 }

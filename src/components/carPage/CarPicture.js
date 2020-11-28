@@ -17,8 +17,6 @@ function Picture({ pic }) {
       `url(${pic})`,
   };
 
-  console.log(pic);
-
   return (
     <>
       <div
