@@ -2,7 +2,7 @@
     z-index: 900000000000;
     background: #111111;
     text-align: center;
-    height: 80px;
+    height: 60px;
   }
   .navbar-home {
     height: 165px;
@@ -21,11 +21,11 @@
     color: #fff;
     position: absolute;
     right: 100px;
-    top: 30px;
+    top: 20px;
   }
   
   .navbar-brand {
-    margin-top: 8px;
+    margin-top: 0px;
     margin-left: 89px;
   }
   
@@ -34,7 +34,7 @@
     background: rgb(105, 33, 21);
     font-family: Overpass;
     font-weight: 200;
-    font-size: 20pt;
+    font-size: 15pt;
     margin-top: 0px;
     margin-right: 5px;
     padding: 10px 7px;
@@ -45,5 +45,5 @@
     font-family: Overpass;
     color: #fff;
     font-weight: 900;
-    font-size: 20pt;
+    font-size: 15pt;
   }

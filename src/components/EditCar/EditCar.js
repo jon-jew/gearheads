@@ -4,6 +4,7 @@ import "react-image-crop/dist/ReactCrop.css";
 import ImageUploading from "react-images-uploading";
 import Fuse from "fuse.js";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useParams, useLocation } from 'react-router-dom';
 import {
   faImages,
   faPlusSquare,
@@ -43,6 +44,10 @@ const options = {
 };
 
 let instagramPosts = [];
+
+function useQuery() {
+  return new URLSearchParams(useLocation().search);
+}
 
 // Increase pixel density for crop preview quality on retina screens.
 const pixelRatio = window.devicePixelRatio || 1;
@@ -255,6 +260,23 @@ export default function EditCarForm({}) {
     ]);
   };
 
+  const makeNewCar = () => {
+    const car = {
+      year: 2005,
+      make: "honda",
+      model: "integra",
+    };
+    axios
+      .post(`localhost:3005/cars/createcar/userid`, car)
+      .then((response) => response.data)
+      .catch((error) => {
+        throw error;
+      });
+  };
+
+  let query = useQuery();
+console.log(query.get("id"));
+
   return (
     <div className="edit-car-container">
       <Button
@@ -265,6 +287,9 @@ export default function EditCarForm({}) {
       </Button>
       <Button className="btn-success save-btn">
         <FontAwesomeIcon icon={faSave} /> Save
+      </Button>
+      <Button onClick={makeNewCar}>
+        Make New Car
       </Button>
       {!preview ? (
         <div className="edit-car-form">

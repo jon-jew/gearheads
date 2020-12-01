@@ -57,7 +57,7 @@
   
   .header-photo-container {
     z-index: 10;
-    height: calc(100vh - 80px);
+    height: calc(100vh - 60px);
     min-height: 650px;
   }
 
@@ -76,7 +76,7 @@
   }
   
   .car-footer {
-    height: calc(100vh - 80px);
+    height: calc(100vh - 60px);
     background: #333333;
     color: #fff;
   }
@@ -89,7 +89,7 @@
     padding-left: 50px;
     padding-right: 50px;
     background: #818181;
-    height: calc(100vh - 80px);
+    height: calc(100vh - 60px);
   }
   
   .left-footer::-webkit-scrollbar {
@@ -103,6 +103,7 @@
     font-size: 50px;
     padding: 25px;
     line-height: 50px;
+    text-transform: uppercase;
     /* border-left: solid 5px rgb(105, 33, 21); */
   }
   
@@ -122,7 +123,7 @@
     overflow-x: hidden;
     background: #fff;
     text-align: center;
-    height: calc(100vh - 80px);
+    height: calc(100vh - 60px);
   }
   
   .right-footer::-webkit-scrollbar {

@@ -29,7 +29,7 @@ p {
 }
 
 .menu-item:hover {
-  color: #FFF;
+  color: #692115;
   text-decoration: none;
 }
 
@@ -72,11 +72,64 @@ p {
   border: 0;
 }
 /*
------------------------------------CAR CARD--------------------------
+-----------------------------------HOME PAGE--------------------------
 */
 
+.home-searchbar-container {
+  /* background: rgb(231, 231, 231); */
+  z-index: 10000;
+  padding: 0px;
+  position: fixed;
+  left: 20%;
+  top: 60px;
+  width: 60%;
+  margin: auto;
+  margin-top: 0px;
+  font-family: Overpass;
+  border-radius:  0px;
+  box-shadow: 0 19px 38px rgba(0, 0, 0, 0.3), 0 15px 12px rgba(0, 0, 0, 0.2);
 
+}
+#home-searchbar {
+  background: #FFF;
+  font-size: 30px;
+  border-radius:  0px;
+}
 
+.form-control:focus{
+  outline: none;
+}
+
+*:focus {
+  outline: none;
+}
+
+.btn-dropdown {
+  background-color: #692115 !important;
+  color: #FFF;
+  border: none !important;
+  border-radius:  0px !important;
+}
+
+#btn-searchbar {
+  border-radius: 0px;
+}
+
+.car-search-form {
+  background: #FFF;
+  margin-bottom: 0px;
+  padding: 10px 30px;
+  border-radius: 0px;
+}
+
+.car-search-form .form-row {
+  margin-bottom: 10px;
+}
+
+#car-searchbar::placeholder {
+  border-radius:  0px;
+  color: rgba(97, 97, 97, 0.733);
+}
 /*
 -----------------------------------MARKETPLACE--------------------------
 */
