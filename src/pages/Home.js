@@ -17,6 +17,9 @@ import {
   faCaretUp,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useHistory, useLocation, useParams } from "react-router-dom";
+import Slider, { Range } from "rc-slider";
+import "rc-slider/assets/index.css";
 
 import Navbar from "../components/navbar/Navbar.js";
 import Sidebar from "../components/Sidebar.js";
@@ -25,19 +28,30 @@ import CAR_MODELS from "../resources/CAR_MODELS";
 
 import "../css/App.css";
 
+function log(value) {
+  console.log(value); //eslint-disable-line
+}
+
 function Home() {
-  const [year, setYear] = useState("");
+  const [startYear, setStartYear] = useState(1910);
+  const [endYear, setEndYear] = useState(new Date().getFullYear() + 1);
   const [make, setMake] = useState("");
   const [model, setModel] = useState("");
   const [models, setModels] = useState([]);
   const [trim, setTrim] = useState("");
   const [trayOpen, setTrayOpen] = useState(true);
 
-  const years = [];
+  let history = useHistory();
+  let { slug } = useParams();
 
-  for (let i = new Date().getFullYear() + 1; i > 1910; i--) {
-    years.push(i);
-  }
+  const formSubmit = (event) => {
+    event.preventDefault();
+    history.push(
+      `/home?${startYear !== "" ? `year=${startYear},` : ""}${
+        make !== "" ? `make=${make},` : ""
+      }${model !== "" ? `model=${model}` : ""}`
+    );
+  };
 
   const onMakeChange = (make) => {
     const newModels = CAR_MODELS.find((e) => e.brand === make).models;
@@ -69,13 +83,18 @@ function Home() {
     );
   };
 
+  const handleYearChange = (value) => {
+    setStartYear(value[0]);
+    setEndYear(value[1]);
+  };
+
   return (
     <div className="App">
       <div id="outer-container">
         <Sidebar />
         <Navbar />
         <main id="page-wrap">
-          <Form className="home-searchbar-container">
+          <Form onSubmit={formSubmit} className="home-searchbar-container">
             <Accordion defaultActiveKey="0">
               <InputGroup id="home-searchbar" size="lg">
                 <InputGroup.Prepend>
@@ -88,7 +107,11 @@ function Home() {
                   placeholder="Welcome to Gearheads! Use this to explore other people's cars."
                 ></Form.Control>
                 <InputGroup.Append>
-                  <Button id="btn-searchbar" variant="outline-secondary">
+                  <Button
+                    type="submit"
+                    id="btn-searchbar"
+                    variant="outline-secondary"
+                  >
                     <FontAwesomeIcon icon={faSearch} />
                   </Button>
                 </InputGroup.Append>
@@ -98,22 +121,19 @@ function Home() {
                   <Form className="car-search-form">
                     <Form.Row className=" car-model">
                       <Col>
-                        <Form.Control
-                          as="select"
-                          onChange={(e) => {
-                            setYear(e.target.value);
-                          }}
-                          placeholder="Model Year"
-                          value={year}
-                        >
-                          <option value="" disabled selected>
-                            Year
-                          </option>
-                          {years.map((modelYear) => (
-                            <option>{modelYear}</option>
-                          ))}
-                        </Form.Control>
-                        
+                        <div>
+
+                          <Range
+                            allowCross={false}
+                            defaultValue={[1910, new Date().getFullYear() + 1]}
+                            onChange={handleYearChange}
+                            min={1910}
+                            max={new Date().getFullYear() + 1}
+                          />
+                          <p>
+                            {startYear} - {endYear}
+                          </p>
+                        </div>
                       </Col>
                       <Col>
                         <Form.Control
@@ -149,7 +169,7 @@ function Home() {
                           ))}
                         </Form.Control>
                       </Col>
-                      <Col >
+                      <Col>
                         <Form.Control
                           placeholder="Trim"
                           value={trim}
