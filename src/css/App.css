@@ -77,7 +77,7 @@ p {
 
 .home-searchbar-container {
   /* background: rgb(231, 231, 231); */
-  z-index: 10000;
+  z-index: 1000;
   padding: 0px;
   position: fixed;
   left: 20%;

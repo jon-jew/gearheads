@@ -1,10 +1,19 @@
-import React, { useState, useCallback, useRef, useEffect } from "react";
+import React, {
+  useState,
+  useCallback,
+  useRef,
+  useEffect,
+  useReducer,
+} from "react";
 import ReactCrop from "react-image-crop";
 import "react-image-crop/dist/ReactCrop.css";
 import ImageUploading from "react-images-uploading";
 import Fuse from "fuse.js";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useParams, useLocation } from 'react-router-dom';
+import { useLocation } from "react-router-dom";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 import {
   faImages,
   faPlusSquare,
@@ -27,11 +36,29 @@ import {
   Button,
   InputGroup,
 } from "react-bootstrap";
+
 import axios from "axios";
 import "./EditCar.css";
 import CAR_MODELS from "../../resources/CAR_MODELS";
 
 import CarPicture from "../carPage/CarPicture.js";
+
+import firebase from "../../services/firebase";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { useCollectionData } from "react-firebase-hooks/firestore";
+
+import initialForm from "./initialForm";
+
+const auth = firebase.auth();
+const firestore = firebase.firestore();
+const storage = firebase.storage();
+const analytics = firebase.analytics();
+
+const years = [];
+
+for (let i = new Date().getFullYear() + 1; i > 1910; i--) {
+  years.push(i);
+}
 
 const INSTAGRAM_TOKEN =
   "IGQVJWdU11dUVrc3M2V2ppTExoUmFjM09KUmhsazIzekNheTRhVFduV2lmaTlfcnppejgtZA2w0NnA2WDljWU1tSFdrNURQVExoZA1FUb0Y3TTBOUGhVUHV4ZAnFDU1A0dEUwNzBicWRQajhfNmg1OWpDdwZDZD";
@@ -44,10 +71,6 @@ const options = {
 };
 
 let instagramPosts = [];
-
-function useQuery() {
-  return new URLSearchParams(useLocation().search);
-}
 
 // Increase pixel density for crop preview quality on retina screens.
 const pixelRatio = window.devicePixelRatio || 1;
@@ -75,14 +98,46 @@ function getResizedCanvas(canvas, newWidth, newHeight) {
   return tmpCanvas;
 }
 
+function formReducer(prevState, { value, key }) {
+  let updatedElement = { ...prevState[key] };
+  updatedElement = value;
+  return { ...prevState, [key]: updatedElement };
+}
+
 export default function EditCarForm({}) {
+  const location = useLocation().pathname;
+  const [user] = useAuthState(auth);
+
+  let carRef = firestore.collection("cars");
+  let docRef = null;
+
+  let uid = "";
+
+  if (location === "/editcar") {
+    const urlParams = new URLSearchParams(window.location.search);
+    uid = urlParams.get("id");
+    docRef = firestore.doc(`cars/${uid}`);
+    docRef.get().then((snapshot) => {
+      if (auth.currentUser && snapshot.data().user !== auth.currentUser.uid) {
+        console.error("Nonmatching user");
+      }
+    });
+  } else if (location === "/newcar") {
+    uid = new Date().getTime();
+  }
+
+  // const query = carRef.where("_id", "==", uid);
+  const query = carRef.orderBy("make").limit(25);
+  const [carData] = useCollectionData(query, { idField: "id" });
+
+  const toastId = React.useRef(null);
+
   const [previewPic, setPreviewPic] = useState("");
-  const [year, setYear] = useState("");
-  const [make, setMake] = useState("");
-  const [model, setModel] = useState("");
+  const [previewBlob, setPreviewBlob] = useState(null);
   const [models, setModels] = useState([]);
-  const [trim, setTrim] = useState("");
   const [preview, setPreview] = useState(false);
+
+  const [form, dispatch] = useReducer(formReducer, initialForm);
 
   //Instagram import stuff
   const [show, setShow] = useState(false);
@@ -93,13 +148,11 @@ export default function EditCarForm({}) {
   const [pictures, setPictures] = useState([]);
   const [search, setSearch] = useState("");
   const [openAlbums, setOpenAlbums] = useState([]);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const url = API_URL + API_FIELDS + "&access_token=" + INSTAGRAM_TOKEN;
     const body = {};
     axios.get(url, body).then((res) => {
-      setLoading(false);
       instagramPosts = res.data.data;
       setPictures(instagramPosts);
     });
@@ -111,7 +164,7 @@ export default function EditCarForm({}) {
   };
 
   async function toggleAlbum(id) {
-    const foundAlbum = openAlbums.find((e) => e.id == id);
+    const foundAlbum = openAlbums.find((e) => e.id === id);
     let albumContents = [];
 
     const url = `https://graph.instagram.com/${id}/children?fields=${ALBUM_FIELDS}&access_token=${INSTAGRAM_TOKEN}`;
@@ -120,7 +173,7 @@ export default function EditCarForm({}) {
       albumContents = res.data.data;
     });
 
-    if (foundAlbum == undefined) {
+    if (foundAlbum === undefined) {
       const album = {
         id: id,
         contents: albumContents,
@@ -149,9 +202,9 @@ export default function EditCarForm({}) {
 
   const onMakeChange = (make) => {
     const newModels = CAR_MODELS.find((e) => e.brand === make).models;
-    setMake(make);
+    dispatch({ value: make, key: "make" });
     setModels(newModels);
-    setModel(newModels[0]);
+    dispatch({ value: newModels[0], key: "model" });
   };
 
   function generateDownload(previewCanvas, crop) {
@@ -168,6 +221,10 @@ export default function EditCarForm({}) {
     canvas.toBlob(
       (blob) => {
         const previewUrl = URL.createObjectURL(blob);
+        blob.lastModifiedDate = new Date();
+        blob.name = "thumbnail.jpg";
+
+        setPreviewBlob(blob);
         setPreviewPic(previewUrl);
       },
       "image/png",
@@ -190,11 +247,6 @@ export default function EditCarForm({}) {
     backgroundImage: `url(${previewPic})`,
   };
 
-  const years = [];
-
-  for (let i = new Date().getFullYear() + 1; i > 1910; i--) {
-    years.push(i);
-  }
   //Crop thumbnail
   const [upImg, setUpImg] = useState();
   const imgRef = useRef(null);
@@ -251,45 +303,90 @@ export default function EditCarForm({}) {
     generateDownload(previewCanvasRef.current, completedCrop);
   }, [completedCrop]);
 
+  function loadXHR(url) {
+    return new Promise(function (resolve, reject) {
+      try {
+        var xhr = new XMLHttpRequest();
+        xhr.open("GET", url);
+        xhr.responseType = "blob";
+        xhr.onerror = function () {
+          reject("Network error.");
+        };
+        xhr.onload = function () {
+          if (xhr.status === 200) {
+            resolve(xhr.response);
+          } else {
+            reject("Loading error:" + xhr.statusText);
+          }
+        };
+        xhr.send();
+      } catch (err) {
+        reject(err.message);
+      }
+    });
+  }
+
   const importInstagram = (media_url) => {
-    setImages([
-      ...images,
-      {
-        data_url: media_url,
-      },
-    ]);
+    loadXHR(media_url).then(function (blob) {
+      setImages([
+        ...images,
+        {
+          file: new File([blob], "test.jpg", { type: "image/jpg" }),
+          data_url: media_url,
+        },
+      ]);
+    });
   };
 
-  const makeNewCar = () => {
-    const car = {
-      year: 2005,
-      make: "honda",
-      model: "integra",
-    };
-    axios
-      .post(`http://localhost:3005/cars/createcar/userid`, car)
-      .then((response) => response.data)
-      .catch((error) => {
-        throw error;
+  const saveCar = async () => {
+    let snapshotID = "";
+    if (upImg === undefined) {
+      toastId.current = toast("Save failed! Please add thumnbnail pic");
+      return;
+    }
+    const carData = form;
+    carData.user = auth.currentUser.uid;
+
+    if (location === "/editcar") {
+      snapshotID = uid;
+      await docRef.set(carData);
+    }
+    else if (location === "/newcar") {
+      await carRef.add(carData).then((snapshot) => {
+        snapshotID = snapshot.id;
       });
-  };
+    }
 
-  let query = useQuery();
-console.log(query.get("id"));
+    var thumbnailRef = storage.ref(`${snapshotID}/thumbnail.jpg`);
+    let p = new Promise((resolve) =>
+      thumbnailRef.put(previewBlob).then(function (snapshot) {
+        resolve();
+      })
+    );
+
+    for (let i = 0, p = Promise.resolve(); i < images.length; i++) {
+      var imageRef = storage.ref(`${snapshotID}/${new Date().getTime()}.jpg`);
+      p = p.then(
+        imageRef.put(images[i].file).then(function (snapshot) {
+          console.log("Uploaded a blob or file!");
+        })
+      );
+    }
+    p.then((toastId.current = toast("Save success!")));
+  };
 
   return (
     <div className="edit-car-container">
+      <ToastContainer />
+
       <Button
         onClick={() => setPreview(!preview)}
         className="preview-btn btn-secondary"
       >
         {preview ? <>Edit</> : <>Preview</>}
       </Button>
-      <Button className="btn-success save-btn">
+      <Button onClick={saveCar} className="btn-success save-btn">
         <FontAwesomeIcon icon={faSave} /> Save
-      </Button>
-      <Button onClick={makeNewCar}>
-        Make New Car
       </Button>
       {!preview ? (
         <div className="edit-car-form">
@@ -306,11 +403,11 @@ console.log(query.get("id"));
                   <Form.Control
                     size="lg"
                     as="select"
-                    onChange={(e) => {
-                      setYear(e.target.value);
-                    }}
+                    onChange={({ target: { value } }) =>
+                      dispatch({ value, key: "year" })
+                    }
                     placeholder="Model Year"
-                    value={year}
+                    value={form.year}
                   >
                     <option value="" disabled selected>
                       Year
@@ -328,7 +425,7 @@ console.log(query.get("id"));
                       onMakeChange(e.target.value);
                     }}
                     placeholder="Make"
-                    value={make}
+                    value={form.make}
                   >
                     <option value="" disabled selected>
                       Make
@@ -342,11 +439,11 @@ console.log(query.get("id"));
                   <Form.Control
                     as="select"
                     size="lg"
-                    onChange={(e) => {
-                      setModel(e.target.value);
-                    }}
+                    onChange={({ target: { value } }) =>
+                      dispatch({ value, key: "model" })
+                    }
                     placeholder="Model"
-                    value={model}
+                    value={form.model}
                   >
                     <option value="" disabled selected>
                       Model
@@ -360,10 +457,10 @@ console.log(query.get("id"));
                   <Form.Control
                     size="lg"
                     placeholder="Trim"
-                    value={trim}
-                    onChange={(e) => {
-                      setTrim(e.target.value);
-                    }}
+                    value={form.trim}
+                    onChange={({ target: { value } }) =>
+                      dispatch({ value, key: "trim" })
+                    }
                   />
                 </Col>
               </Form.Row>
@@ -379,6 +476,9 @@ console.log(query.get("id"));
                       placeholder="200"
                       aria-label="Recipient's username"
                       aria-describedby="basic-addon2"
+                      onChange={({ target: { value } }) =>
+                        dispatch({ value, key: "power" })
+                      }
                     />
                     <InputGroup.Append>
                       <InputGroup.Text id="basic-addon2">HP</InputGroup.Text>
@@ -397,6 +497,9 @@ console.log(query.get("id"));
                       placeholder="150"
                       aria-label="Recipient's username"
                       aria-describedby="basic-addon2"
+                      onChange={({ target: { value } }) =>
+                        dispatch({ value, key: "torque" })
+                      }
                     />
                     <InputGroup.Append>
                       <InputGroup.Text id="basic-addon2">
@@ -416,6 +519,9 @@ console.log(query.get("id"));
                       placeholder="2500"
                       aria-label="Recipient's username"
                       aria-describedby="basic-addon2"
+                      onChange={({ target: { value } }) =>
+                        dispatch({ value, key: "weight" })
+                      }
                     />
                     <InputGroup.Append>
                       <InputGroup.Text id="basic-addon2">LBS</InputGroup.Text>
@@ -435,6 +541,9 @@ console.log(query.get("id"));
                       placeholder="4AGE"
                       aria-label="Recipient's username"
                       aria-describedby="basic-addon2"
+                      onChange={({ target: { value } }) =>
+                        dispatch({ value, key: "engine" })
+                      }
                     />
                   </InputGroup>
                 </Col>
@@ -449,6 +558,9 @@ console.log(query.get("id"));
                       placeholder="2"
                       aria-label="Recipient's username"
                       aria-describedby="basic-addon2"
+                      onChange={({ target: { value } }) =>
+                        dispatch({ value, key: "displacement" })
+                      }
                     />
                     <InputGroup.Append>
                       <InputGroup.Text id="basic-addon2">L</InputGroup.Text>
@@ -462,7 +574,12 @@ console.log(query.get("id"));
                         Drivetrain Layout
                       </InputGroup.Text>
                     </InputGroup.Prepend>
-                    <FormControl as="select">
+                    <FormControl
+                      as="select"
+                      onChange={({ target: { value } }) =>
+                        dispatch({ value, key: "layout" })
+                      }
+                    >
                       <option>Front Engine RWD</option>
                       <option>Front Engine FWD</option>
                       <option>Mid Engine RWD</option>
@@ -481,6 +598,9 @@ console.log(query.get("id"));
                       placeholder="AE86"
                       aria-label="Recipient's username"
                       aria-describedby="basic-addon2"
+                      onChange={({ target: { value } }) =>
+                        dispatch({ value, key: "chassis" })
+                      }
                     />
                   </InputGroup>
                 </Col>
@@ -489,7 +609,13 @@ console.log(query.get("id"));
                 <Col sm={6}>
                   <Form.Group controlId="exampleForm.ControlTextarea1">
                     <Form.Label>Description</Form.Label>
-                    <Form.Control as="textarea" rows={3} />
+                    <Form.Control
+                      as="textarea"
+                      rows={3}
+                      onChange={({ target: { value } }) =>
+                        dispatch({ value, key: "description" })
+                      }
+                    />
                   </Form.Group>
                 </Col>
               </Form.Row>
@@ -510,15 +636,7 @@ console.log(query.get("id"));
                   onComplete={(c) => setCompletedCrop(c)}
                   keepSelection
                 />
-                <canvas
-                  ref={previewCanvasRef}
-                  className="upload-preview"
-                  // Rounding is important so the canvas width and height matches/is a multiple for sharpness.
-                  // style={{
-                  //   width: Math.round(completedCrop?.width ?? 0),
-                  //   height: Math.round(completedCrop?.height ?? 0),
-                  // }}
-                />
+                <canvas ref={previewCanvasRef} className="upload-preview" />
               </Col>
               <Col s="2" className="preview-container">
                 <h3 className="preview-header">
@@ -530,9 +648,9 @@ console.log(query.get("id"));
                       <i className="fas fa-heart"></i> 22
                     </div>
                     <div className="car-overlay-title">
-                      <span className="car-year">{year}</span>
+                      <span className="car-year">{form.year}</span>
                       <br />
-                      {`${make} ${model}`}
+                      {`${form.make} ${form.model}`}
                     </div>
                     <span className="car-user">
                       <i className="fas fa-user"></i> SPEEDYSPEEDBOI
@@ -604,8 +722,8 @@ console.log(query.get("id"));
         <div className="car-header" id="page">
           <div className="header-photo-container" style={styles}>
             <div className="car-header-overlay">
-              <div className="car-header-year">{year}</div>
-              <div className="car-header-model">{`${make} ${model}`}</div>
+              <div className="car-header-year">{form.year}</div>
+              <div className="car-header-model">{`${form.make} ${form.model}`}</div>
               <div className="car-header-user">
                 <i className="fas fa-user"></i> Speedy Speed Boi
               </div>
@@ -620,11 +738,11 @@ console.log(query.get("id"));
                     <i className="fas fa-user"></i> Speedy Speed Boi's
                     <br />
                   </span>
-                  {year}
+                  {form.year}
                   <br />
-                  <strong>{make}</strong>
+                  <strong>{form.make}</strong>
                   <br />
-                  {model} {trim}
+                  {form.model} {form.trim}
                 </div>
                 <input className="car-description"></input>
               </Col>
@@ -701,7 +819,7 @@ console.log(query.get("id"));
                       </Button>
                     )}
                     {element.media_type === "CAROUSEL_ALBUM" &&
-                      openAlbums.find((e) => e.id == element.id) ==
+                      openAlbums.find((e) => e.id === element.id) ===
                         undefined && (
                         <div>
                           <img
@@ -711,12 +829,12 @@ console.log(query.get("id"));
                         </div>
                       )}
                     {element.media_type === "CAROUSEL_ALBUM" &&
-                      openAlbums.find((e) => e.id == element.id) !==
+                      openAlbums.find((e) => e.id === element.id) !==
                         undefined && (
                         <div>
                           <div>
                             {openAlbums
-                              .find((e) => e.id == element.id)
+                              .find((e) => e.id === element.id)
                               .contents.map(function (img) {
                                 return (
                                   <div className="album-pic-container">

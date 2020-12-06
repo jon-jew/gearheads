@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext, createContext } from "react";
 import Home from "./pages/Home.js";
 import Garage from "./pages/Garage.js";
 import CarPage from "./pages/CarPage.js";
@@ -9,9 +9,12 @@ import ScrollToTop from "react-router-scroll-top";
 
 import {
   BrowserRouter as Router,
+  Switch,
   Route,
   Link,
-  NavLink,
+  Redirect,
+  useHistory,
+  useLocation,
 } from "react-router-dom";
 
 function App() {
@@ -23,9 +26,12 @@ function App() {
       <Route path="/login/" exact component={Login} />
       <Route path="/user/" exact component={UserProfile} />
       <Route path="/editcar/" exact component={EditCar} />
+      <Route path="/newcar/" exact component={EditCar} />
       <ScrollToTop />
     </Router>
   );
 }
+
+
 
 export default App;

@@ -1,11 +1,6 @@
 import React from "react";
 import { slide as Menu } from "react-burger-menu";
-import {
-  BrowserRouter as Router,
-  Route,
-  Link,
-  NavLink,
-} from "react-router-dom";
+import { NavLink } from "react-router-dom";
 
 class Sidebar extends React.Component {
   showSettings(event) {
@@ -26,7 +21,7 @@ class Sidebar extends React.Component {
           className="menu-item"
           activeStyle={{ color: "#692115" }}
         >
-          <i class="list-icon fas fa-home"></i> HOME
+          <i className="list-icon fas fa-home"></i> HOME
         </NavLink>
         <NavLink
           to="/user/"
@@ -34,7 +29,7 @@ class Sidebar extends React.Component {
           className="menu-item"
           activeStyle={{ color: "#692115" }}
         >
-          <i class="list-icon fas fa-binoculars"></i> MY PROFILE
+          <i className="list-icon fas fa-binoculars"></i> MY PROFILE
         </NavLink>
         <NavLink
           to="/garage/"
@@ -42,7 +37,7 @@ class Sidebar extends React.Component {
           className="menu-item"
           activeStyle={{ color: "#692115" }}
         >
-          <i class="list-icon fas fa-warehouse"></i> MY GARAGE
+          <i className="list-icon fas fa-warehouse"></i> MY GARAGE
         </NavLink>
       </Menu>
     );

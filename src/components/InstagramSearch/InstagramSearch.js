@@ -7,7 +7,7 @@ import "../../css/App.css";
 
 import axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faImages, faPlusSquare } from "@fortawesome/free-regular-svg-icons";
+import { faImages } from "@fortawesome/free-regular-svg-icons";
 
 import "./InstagramSearch.css";
 
@@ -45,7 +45,7 @@ function UserProfile() {
   };
 
   async function toggleAlbum(id) {
-    const foundAlbum = openAlbums.find((e) => e.id == id);
+    const foundAlbum = openAlbums.find((e) => e.id === id);
     let albumContents = [];
 
     const url = `https://graph.instagram.com/${id}/children?fields=${ALBUM_FIELDS}&access_token=${INSTAGRAM_TOKEN}`;
@@ -54,7 +54,7 @@ function UserProfile() {
       albumContents = res.data.data;
     });
 
-    if (foundAlbum == undefined) {
+    if (foundAlbum === undefined) {
       const album = {
         id: id,
         contents: albumContents,
@@ -117,7 +117,7 @@ function UserProfile() {
                     </Button>
                   )}
                   {element.media_type === "CAROUSEL_ALBUM" &&
-                    openAlbums.find((e) => e.id == element.id) == undefined && (
+                    openAlbums.find((e) => e.id === element.id) == undefined && (
                       <div>
                         <img
                           className="insta-pic"
@@ -126,7 +126,7 @@ function UserProfile() {
                       </div>
                     )}
                   {element.media_type === "CAROUSEL_ALBUM" &&
-                    openAlbums.find((e) => e.id == element.id) !==
+                    openAlbums.find((e) => e.id === element.id) !==
                       undefined && (
                       <div>
                         <div>

@@ -1,4 +1,4 @@
-import React, { Component, useRef, useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Modal, Button } from "react-bootstrap";
 
 
@@ -31,6 +31,7 @@ function Picture({ pic }) {
           <img
             className="car-modal-picture"
             src={pic}
+            alt="car-pic"
           />
         </Modal.Body>
         <Modal.Footer className="picture-modal">

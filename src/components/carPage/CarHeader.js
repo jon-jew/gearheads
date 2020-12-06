@@ -1,4 +1,4 @@
-import React, { Component, useRef, useEffect, useState } from "react";
+import React, { useRef, useState } from "react";
 import * as Scroll from "react-scroll";
 import "./css/CarPage.css";
 import CarPicture from "./CarPicture";
@@ -6,7 +6,7 @@ import { Row, Col } from "react-bootstrap";
 
 var Element = Scroll.Element;
 var scroller = Scroll.scroller;
-var scroll = Scroll.animateScroll;
+// var scroll = Scroll.animateScroll;
 
 var styles = {
   backgroundAttachment: "fixed",

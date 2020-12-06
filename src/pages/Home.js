@@ -1,14 +1,5 @@
 import React, { useState } from "react";
-import {
-  Accordion,
-  Card,
-  Col,
-  Row,
-  FormControl,
-  Button,
-  Form,
-  InputGroup,
-} from "react-bootstrap";
+import { Accordion, Col, Button, Form, InputGroup } from "react-bootstrap";
 import { useAccordionToggle } from "react-bootstrap/AccordionToggle";
 import {
   faSearch,
@@ -18,7 +9,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useHistory, useLocation, useParams } from "react-router-dom";
-import Slider, { Range } from "rc-slider";
+import { Range } from "rc-slider";
 import "rc-slider/assets/index.css";
 
 import Navbar from "../components/navbar/Navbar.js";
@@ -28,9 +19,6 @@ import CAR_MODELS from "../resources/CAR_MODELS";
 
 import "../css/App.css";
 
-function log(value) {
-  console.log(value); //eslint-disable-line
-}
 
 function Home() {
   const [startYear, setStartYear] = useState(1910);
@@ -122,7 +110,6 @@ function Home() {
                     <Form.Row className=" car-model">
                       <Col>
                         <div>
-
                           <Range
                             allowCross={false}
                             defaultValue={[1910, new Date().getFullYear() + 1]}
