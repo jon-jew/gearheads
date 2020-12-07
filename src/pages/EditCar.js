@@ -11,9 +11,7 @@ function EditCar(){
         <Sidebar />
         <Navbar />
         <main id="page-wrap">
-
           <EditCarComponent />
-
         </main>
       </div>
     </div>

@@ -12,13 +12,20 @@ import { useHistory, useLocation, useParams } from "react-router-dom";
 import { Range } from "rc-slider";
 import "rc-slider/assets/index.css";
 
+import firebase from "../services/firebase";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { useCollectionData } from "react-firebase-hooks/firestore";
+
 import Navbar from "../components/navbar/Navbar.js";
 import Sidebar from "../components/Sidebar.js";
-import CarCardContainer from "../components/CarCardContainer.js";
 import CAR_MODELS from "../resources/CAR_MODELS";
+import CarCardGrad from "../components/CarCard/CarCard";
 
 import "../css/App.css";
 
+const auth = firebase.auth();
+const firestore = firebase.firestore();
+const storage = firebase.storage();
 
 function Home() {
   const [startYear, setStartYear] = useState(1910);
@@ -28,6 +35,13 @@ function Home() {
   const [models, setModels] = useState([]);
   const [trim, setTrim] = useState("");
   const [trayOpen, setTrayOpen] = useState(true);
+
+  const carsRef = firestore.collection("cars");
+
+  const query = carsRef.orderBy("description").limit(25);
+
+  const [cars] = useCollectionData(query, { idField: "id" });
+  console.log(cars);
 
   let history = useHistory();
   let { slug } = useParams();
@@ -171,7 +185,13 @@ function Home() {
               </Accordion.Collapse>
             </Accordion>
           </Form>
-          <CarCardContainer />
+          <div className="card-container">
+            {cars ? (
+              cars.map((car) => <CarCardGrad car={car} />)
+            ) : (
+              <div>loading</div>
+            )}
+          </div>
         </main>
       </div>
     </div>

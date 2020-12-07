@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Navbar from "../components/navbar/Navbar.js";
 import Sidebar from "../components/Sidebar.js";
 import CarHeader from "../components/carPage/CarHeader.js";
@@ -7,6 +7,7 @@ import LikeButton from "../components/LikeButton.js";
 import "../css/App.css";
 
 function CarPage() {
+
   return (
     <div className="App">
       <div id="outer-container">
