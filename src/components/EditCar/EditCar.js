@@ -47,7 +47,7 @@ import firebase from "../../services/firebase";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useCollectionData } from "react-firebase-hooks/firestore";
 
-import initialForm from "./initialForm";
+import INITIAL_FORM from "./initialForm";
 
 const auth = firebase.auth();
 const firestore = firebase.firestore();
@@ -104,32 +104,63 @@ function formReducer(prevState, { value, key }) {
   return { ...prevState, [key]: updatedElement };
 }
 
+let initForm = INITIAL_FORM;
+
 export default function EditCarForm({}) {
   const location = useLocation().pathname;
   const [user] = useAuthState(auth);
 
   let carRef = firestore.collection("cars");
   let docRef = null;
-
   let uid = "";
 
   if (location === "/editcar") {
     const urlParams = new URLSearchParams(window.location.search);
     uid = urlParams.get("id");
     docRef = firestore.doc(`cars/${uid}`);
-    docRef.get().then((snapshot) => {
-      if (auth.currentUser && snapshot.data().user !== auth.currentUser.uid) {
-        console.error("Nonmatching user");
-      }
-    });
-  } else if (location === "/newcar") {
-    uid = new Date().getTime();
   }
 
-  // const query = carRef.where("_id", "==", uid);
-  const query = carRef.orderBy("make").limit(25);
-  const [carData] = useCollectionData(query, { idField: "id" });
+  useEffect(() => {
+    if (location === "/editcar") getCarData();
+  }, []);
 
+  const getCarData = async () => {
+    docRef.get().then((snapshot) => {
+      if (snapshot.data()) {
+        if (auth.currentUser && snapshot.data().user !== auth.currentUser.uid) {
+          console.error("Nonmatching user");
+        } else {
+          const result = snapshot.data();
+          console.log("hit");
+          onMakeChange(result["make"]);
+          for (const property in result) {
+            if (property !== "make") {
+              dispatch({ value: result[property], key: property });
+            }
+          }
+        }
+      }
+    });
+
+    await storage
+      .ref(`${uid}/thumbnail.jpg`)
+      .getDownloadURL()
+      .then(function (url) {
+        var xhr = new XMLHttpRequest();
+        xhr.responseType = "blob";
+        xhr.onload = function (event) {
+          var blob = xhr.response;
+        };
+        xhr.open("GET", url);
+        xhr.send();
+        console.log(url);
+        setUpImg(url);
+        setCrop({ unit: "%", width: 100, aspect: 16 / 9 });
+      })
+      .catch(function (error) {
+        // Handle any errors
+      });
+  };
   const toastId = React.useRef(null);
 
   const [previewPic, setPreviewPic] = useState("");
@@ -137,7 +168,7 @@ export default function EditCarForm({}) {
   const [models, setModels] = useState([]);
   const [preview, setPreview] = useState(false);
 
-  const [form, dispatch] = useReducer(formReducer, initialForm);
+  const [form, dispatch] = useReducer(formReducer, initForm);
 
   //Instagram import stuff
   const [show, setShow] = useState(false);
@@ -253,6 +284,7 @@ export default function EditCarForm({}) {
   const previewCanvasRef = useRef(null);
   const [crop, setCrop] = useState({ unit: "%", width: 30, aspect: 16 / 9 });
   const [completedCrop, setCompletedCrop] = useState(null);
+  console.log(crop);
 
   const onSelectFile = (e) => {
     if (e.target.files && e.target.files.length > 0) {
@@ -350,8 +382,7 @@ export default function EditCarForm({}) {
     if (location === "/editcar") {
       snapshotID = uid;
       await docRef.set(carData);
-    }
-    else if (location === "/newcar") {
+    } else if (location === "/newcar") {
       await carRef.add(carData).then((snapshot) => {
         snapshotID = snapshot.id;
       });
@@ -476,6 +507,7 @@ export default function EditCarForm({}) {
                       placeholder="200"
                       aria-label="Recipient's username"
                       aria-describedby="basic-addon2"
+                      value={form.power}
                       onChange={({ target: { value } }) =>
                         dispatch({ value, key: "power" })
                       }
@@ -497,6 +529,7 @@ export default function EditCarForm({}) {
                       placeholder="150"
                       aria-label="Recipient's username"
                       aria-describedby="basic-addon2"
+                      value={form.torque}
                       onChange={({ target: { value } }) =>
                         dispatch({ value, key: "torque" })
                       }
@@ -519,6 +552,7 @@ export default function EditCarForm({}) {
                       placeholder="2500"
                       aria-label="Recipient's username"
                       aria-describedby="basic-addon2"
+                      value={form.weight}
                       onChange={({ target: { value } }) =>
                         dispatch({ value, key: "weight" })
                       }
@@ -541,6 +575,7 @@ export default function EditCarForm({}) {
                       placeholder="4AGE"
                       aria-label="Recipient's username"
                       aria-describedby="basic-addon2"
+                      value={form.engine}
                       onChange={({ target: { value } }) =>
                         dispatch({ value, key: "engine" })
                       }
@@ -558,6 +593,7 @@ export default function EditCarForm({}) {
                       placeholder="2"
                       aria-label="Recipient's username"
                       aria-describedby="basic-addon2"
+                      value={form.displacement}
                       onChange={({ target: { value } }) =>
                         dispatch({ value, key: "displacement" })
                       }
@@ -576,6 +612,7 @@ export default function EditCarForm({}) {
                     </InputGroup.Prepend>
                     <FormControl
                       as="select"
+                      value={form.layout}
                       onChange={({ target: { value } }) =>
                         dispatch({ value, key: "layout" })
                       }
@@ -598,6 +635,7 @@ export default function EditCarForm({}) {
                       placeholder="AE86"
                       aria-label="Recipient's username"
                       aria-describedby="basic-addon2"
+                      value={form.chassis}
                       onChange={({ target: { value } }) =>
                         dispatch({ value, key: "chassis" })
                       }
@@ -612,6 +650,7 @@ export default function EditCarForm({}) {
                     <Form.Control
                       as="textarea"
                       rows={3}
+                      value={form.description}
                       onChange={({ target: { value } }) =>
                         dispatch({ value, key: "description" })
                       }
@@ -630,9 +669,12 @@ export default function EditCarForm({}) {
                 </div>
                 <ReactCrop
                   src={upImg}
+                  crossorigin="anonymous"
                   onImageLoaded={onLoad}
                   crop={crop}
-                  onChange={(c) => setCrop(c)}
+                  onChange={(c) => {
+                    if (c.width !== 0 && c.length !== 0) setCrop(c);
+                  }}
                   onComplete={(c) => setCompletedCrop(c)}
                   keepSelection
                 />
