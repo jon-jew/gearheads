@@ -11,7 +11,7 @@ import { BrowserRouter as Router, Route } from "react-router-dom";
 function App() {
   return (
     <Router>
-      <Route path="/home" exact component={Home} />
+      <Route path="/" exact component={Home} />
       <Route path="/garage/" exact component={Garage} />
       <Route path="/carpage/" exact component={CarPage} />
       <Route path="/user/" exact component={UserProfile} />

@@ -38,7 +38,7 @@ function Home() {
 
   const carsRef = firestore.collection("cars");
 
-  const query = carsRef.orderBy("description").limit(25);
+  const query = carsRef.orderBy("make").limit(25);
 
   const [cars] = useCollectionData(query, { idField: "id" });
   console.log(cars);

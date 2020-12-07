@@ -16,7 +16,7 @@ class Sidebar extends React.Component {
         styles={styles}
       >
         <NavLink
-          to="/home"
+          to="/"
           id="home"
           className="menu-item"
           activeStyle={{ color: "#692115" }}
