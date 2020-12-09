@@ -15,7 +15,6 @@ function Picture({ pic }) {
     backgroundImage: `url('${pic}')`,
   };
 
-  console.log(background);
   return (
     <>
       <div

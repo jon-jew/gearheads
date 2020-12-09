@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCog } from "@fortawesome/free-solid-svg-icons";
@@ -6,16 +6,41 @@ import { Button, Row, Col } from "react-bootstrap";
 
 import "./GarageCarCard.css";
 
-const background = {
-  backgroundPosition: "center",
-  backgroundRepeat: "no-repeat",
-  backgroundSize: "cover",
-  backgroundImage:
-    "url(http://speedhunters-wp-production.s3.amazonaws.com/wp-content/uploads/2017/01/23203248/DSC09946NN-1200x800.jpg)",
-};
+import firebase from "../../services/firebase";
+const storage = firebase.storage();
 
 function CarCardGrad({ car, isOwner }) {
-  console.log(car)
+  const [img, setImg] = useState(null);
+  useEffect(() => {
+    getCarData();
+  }, []);
+
+  const getCarData = async () => {
+    await storage
+      .ref(`${car.id}/thumbnail.jpg`)
+      .getDownloadURL()
+      .then(function (url) {
+        var xhr = new XMLHttpRequest();
+        xhr.responseType = "blob";
+        xhr.onload = function (event) {
+          var blob = xhr.response;
+        };
+        xhr.open("GET", url);
+        xhr.send();
+        setImg(url);
+      })
+      .catch(function (error) {
+        // Handle any errors
+      });
+  };
+
+  const background = {
+    backgroundPosition: "center",
+    backgroundRepeat: "no-repeat",
+    backgroundSize: "cover",
+    backgroundImage: `url('${img}')`,
+  };
+
   return (
     <div className="garage-car-card">
       <Link to={`/carpage?id=${car.id}`} className="car-card">
@@ -36,34 +61,34 @@ function CarCardGrad({ car, isOwner }) {
           <Col>
             <span className="car-card-stat">Power</span>
             <br />
-            250 HP
+            {car.data.power} HP
           </Col>
           <Col>
             <span className="car-card-stat">Torque</span>
             <br />
-            250 FT/LB
+            {car.data.torque} FT/LB
           </Col>
           <Col>
             <span className="car-card-stat">Weight</span>
             <br />
-            2800 LBS
+            {car.data.weight} LBS
           </Col>
         </Row>
         <Row className="footer-row">
           <Col>
             <span className="car-card-stat">Engine</span>
             <br />
-            2.6 L 4G54
+            {car.data.displacement} L {car.data.engine}
           </Col>
           <Col>
             <span className="car-card-stat">Layout</span>
             <br />
-            FR
+            {car.data.layout}
           </Col>
           <Col>
             <span className="car-card-stat">Chassis</span>
             <br />
-            A187A
+            {car.data.chassis}
           </Col>
         </Row>
         <div>

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useReducer, useEffect } from "react";
 import { Accordion, Col, Button, Form, InputGroup } from "react-bootstrap";
 import { useAccordionToggle } from "react-bootstrap/AccordionToggle";
 import {
@@ -8,7 +8,7 @@ import {
   faCaretUp,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useHistory, useLocation, useParams } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 import { Range } from "rc-slider";
 import "rc-slider/assets/index.css";
 
@@ -27,40 +27,57 @@ const auth = firebase.auth();
 const firestore = firebase.firestore();
 const storage = firebase.storage();
 
+const initForm = {
+  year: new Date().getFullYear() + 1,
+  make: "",
+  model: "",
+  trim: "",
+};
+
+function formReducer(prevState, { value, key }) {
+  let updatedElement = { ...prevState[key] };
+  updatedElement = value;
+  return { ...prevState, [key]: updatedElement };
+}
+
 function Home() {
-  const [startYear, setStartYear] = useState(1910);
-  const [endYear, setEndYear] = useState(new Date().getFullYear() + 1);
-  const [make, setMake] = useState("");
-  const [model, setModel] = useState("");
   const [models, setModels] = useState([]);
-  const [trim, setTrim] = useState("");
-  const [trayOpen, setTrayOpen] = useState(true);
-  console.log(make);
+  const [form, dispatch] = useReducer(formReducer, initForm);
+  const [carRes, setCarRes] = useState([]);
+  const [trayOpen, setTrayOpen] = useState(false);
 
   const carsRef = firestore.collection("cars");
 
-  const query = carsRef.where("make", "==", "Mazda").where("model", "==", "RX-7");
+  const query = carsRef.orderBy("make");
 
-  const [cars] = useCollectionData(query, { idField: "id" });
-  console.log(cars);
+  const [cars, loading, error] = useCollectionData(query, { idField: "id" });
 
+  useEffect(() => {
+    setCarRes(cars);
+  }, [cars]);
+
+  console.log(carRes);
   let history = useHistory();
-  let { slug } = useParams();
 
   const formSubmit = (event) => {
     event.preventDefault();
+    const newCars = cars.filter((car) => {
+      if (form.model !== '') return car.model === form.model; 
+      else if (form.model == '') return car;
+      return car.make === form.make;
+    });
+    setCarRes(newCars);
     history.push(
-      `/home?${startYear !== "" ? `year=${startYear},` : ""}${
-        make !== "" ? `make=${make},` : ""
-      }${model !== "" ? `model=${model}` : ""}`
+      `?${form.startYear !== "" ? `year=${form.startYear},` : ""}${
+        form.make !== "" ? `make=${form.make},` : ""
+      }${form.model !== "" ? `model=${form.model}` : ""}`
     );
   };
 
   const onMakeChange = (make) => {
     const newModels = CAR_MODELS.find((e) => e.brand === make).models;
-    setMake(make);
+    dispatch({ value: make, key: "make" });
     setModels(newModels);
-    setModel(newModels[0]);
   };
 
   function CustomToggle({ children, eventKey }) {
@@ -87,8 +104,8 @@ function Home() {
   };
 
   const handleYearChange = (value) => {
-    setStartYear(value[0]);
-    setEndYear(value[1]);
+    dispatch({ value: value[0], key: "startYear" });
+    dispatch({ value: value[1], key: "endYear" });
   };
 
   return (
@@ -133,7 +150,7 @@ function Home() {
                             max={new Date().getFullYear() + 1}
                           />
                           <p>
-                            {startYear} - {endYear}
+                            {form.startYear} - {form.endYear}
                           </p>
                         </div>
                       </Col>
@@ -144,7 +161,7 @@ function Home() {
                             onMakeChange(e.target.value);
                           }}
                           placeholder="Make"
-                          value={make}
+                          value={form.make}
                         >
                           <option value="" disabled selected>
                             Make
@@ -158,10 +175,10 @@ function Home() {
                         <Form.Control
                           as="select"
                           onChange={(e) => {
-                            setModel(e.target.value);
+                            dispatch({ value: e.target.value, key: "model" });
                           }}
                           placeholder="Model"
-                          value={model}
+                          value={form.model}
                         >
                           <option value="" disabled selected>
                             Model
@@ -171,15 +188,6 @@ function Home() {
                           ))}
                         </Form.Control>
                       </Col>
-                      <Col>
-                        <Form.Control
-                          placeholder="Trim"
-                          value={trim}
-                          onChange={(e) => {
-                            setTrim(e.target.value);
-                          }}
-                        />
-                      </Col>
                     </Form.Row>
                   </Form>
                 </div>
@@ -187,10 +195,10 @@ function Home() {
             </Accordion>
           </Form>
           <div className="card-container">
-            {cars ? (
-              cars.map((car) => <CarCardGrad car={car} />)
+            {!loading && carRes !== undefined ? (
+              carRes.map((car) => <CarCardGrad car={car} />)
             ) : (
-              <div>loading</div>
+              <div>Loading...</div>
             )}
           </div>
         </main>

@@ -184,7 +184,7 @@ export default function EditCarForm({}) {
 
     if (result !== null) {
       const initImages = [];
-      const initFileList = []
+      const initFileList = [];
       await Promise.all(
         result.images.map(async (img) => {
           initFileList.push(img);
@@ -468,8 +468,7 @@ export default function EditCarForm({}) {
           uploadImageNames.push(snapshot._delegate.metadata.name);
         });
       })
-    )
-
+    );
 
     await carRef.doc(uid).update({
       images: fileList,
@@ -477,8 +476,6 @@ export default function EditCarForm({}) {
 
     toastId.current = toast("Save success!");
   };
-
-  console.log(images);
 
   return (
     <div className="edit-car-container">

@@ -2,10 +2,17 @@ import React, { useRef, useState, useEffect } from "react";
 import * as Scroll from "react-scroll";
 import "./css/CarPage.css";
 import CarPicture from "./CarPicture";
+import Loading from '../Loading/Loading';
 import { Row, Col } from "react-bootstrap";
+import { Link } from "react-router-dom";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 import firebase from "../../services/firebase";
+import { useAuthState } from "react-firebase-hooks/auth";
 import { useDocument } from "react-firebase-hooks/firestore";
+
+const auth = firebase.auth();
 
 const storage = firebase.storage();
 const firestore = firebase.firestore();
@@ -24,6 +31,13 @@ const handleClick = () => {
 function CarHeader() {
   const [img, setImg] = useState(null);
   const [gallery, setGallery] = useState([]);
+  const [liked, setLiked] = useState(false);
+  const [user] = useAuthState(auth);
+
+  const toastId = React.useRef(null);
+
+  let carRef = firestore.collection("cars");
+
   const urlParams = new URLSearchParams(window.location.search);
   const uid = urlParams.get("id");
   const [value, loading, error] = useDocument(
@@ -82,6 +96,7 @@ function CarHeader() {
           });
       })
     );
+    setLiked(user && value.data().likes.includes(auth.currentUser.uid));
     setGallery(initImages);
   };
 
@@ -94,32 +109,45 @@ function CarHeader() {
   };
   const carfooter = useRef(null);
 
-  const [like, setLike] = useState(false);
-  const [hover, setHover] = useState(false);
-
-  function likeClick() {
-    setLike(!like);
-  }
-
-  function likeHover() {
-    setHover(!hover);
+  async function likeClick() {
+    if (user) {
+      if (value.data().likes.includes(auth.currentUser.uid)) {
+        const removedLikes = value
+          .data()
+          .likes.filter((like) => like != auth.currentUser.uid);
+        await carRef.doc(uid).update({
+          likes: removedLikes,
+        });
+        setLiked(false);
+      } else {
+        await carRef.doc(uid).update({
+          likes: [...value.data().likes, auth.currentUser.uid],
+        });
+        setLiked(true);
+      }
+    } else {
+      toastId.current = toast("Please login to like vehicles");
+    }
   }
 
   return (
     <>
       {loading ? (
-        <div>loading...</div>
+        <Loading />
       ) : (
         <div className="car-header" id="page">
+          <ToastContainer />
           <div className="header-photo-container" style={styles}>
             <div className="car-header-overlay">
               <div className="car-header-year">{value.data().year}</div>
               <div className="car-header-model">
                 {value.data().make} {value.data().model}
               </div>
-              <div className="car-header-user">
-                <i className="fas fa-user"></i> Speedy Speed Boi
-              </div>
+              <Link to={`/garage?user=${value.data().user}`}>
+                <div className="car-header-user">
+                  <i className="fas fa-user"></i> Speedy Speed Boi
+                </div>
+              </Link>
               <br />
               <a className="down-button" onClick={handleClick}>
                 <i className="fas fa-chevron-circle-down"></i>
@@ -131,25 +159,15 @@ function CarHeader() {
             <Row>
               <Col xs={4} ref={carfooter} className="left-footer" id="123">
                 <div className="left-header">
-                  {like || hover ? (
-                    <div
-                      className="like-button"
-                      onMouseEnter={likeHover}
-                      onMouseLeave={likeHover}
-                      onClick={likeClick}
-                    >
-                      <i className="fas fa-heart heart-color"></i> 1224
-                    </div>
-                  ) : (
-                    <div
-                      className="like-button"
-                      onMouseEnter={likeHover}
-                      onMouseLeave={likeHover}
-                      onClick={likeClick}
-                    >
-                      <i className="fas fa-heart"></i> 1223
-                    </div>
-                  )}
+                  <div className="like-button" onClick={likeClick}>
+                    <i
+                      className={
+                        liked ? "fas fa-heart" : "far fa-heart"
+                      }
+                      style={liked ? { color: "#ba6666" } : { color: "#FFF" }}
+                    ></i>{" "}
+                    {value.data().likes.length}
+                  </div>
                   <span className="footer-user">
                     <i className="fas fa-user"></i> Speedy Speed Boi's
                     <br />

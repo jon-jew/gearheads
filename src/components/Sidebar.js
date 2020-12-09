@@ -23,14 +23,14 @@ function Sidebar() {
       >
         <i className="list-icon fas fa-home"></i> HOME
       </NavLink>
-      <NavLink
+      {/* <NavLink
         to="/user/"
         id="explore"
         className="menu-item"
         activeStyle={{ color: "#692115" }}
       >
         <i className="list-icon fas fa-binoculars"></i> MY PROFILE
-      </NavLink>
+      </NavLink> */}
       {user && (
         <NavLink
           to={`/garage?user=${user.uid}`}

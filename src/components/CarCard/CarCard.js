@@ -40,7 +40,7 @@ function CarCardGrad({ car }) {
     <Link to={`/carpage?id=${car.id}`} className="car-card">
       <div className="card-overlay">
         <div className="card-like">
-          <i className="fas fa-heart"></i> 22
+          <i className="fas fa-heart"></i> {car.likes.length}
         </div>
         <div className="car-overlay-title">
           <span className="car-year">{car.year}</span>

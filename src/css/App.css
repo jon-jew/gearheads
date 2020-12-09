@@ -83,6 +83,10 @@ p {
   padding: 10px;
 }
 
+.garage-owner {
+  text-transform: uppercase;
+}
+
 /*
 -----------------------------------HOME PAGE--------------------------
 */

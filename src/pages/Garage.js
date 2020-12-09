@@ -47,7 +47,7 @@ function Garage() {
       const res = carValue.docs.map((doc) => {
         carList.push({ id: doc.id, data: doc.data() });
       });
-      setIsUsersGarage(user.uid === userValue.docs[0].data().user);
+      setIsUsersGarage(user && user.uid === userValue.docs[0].data().user);
       setOwner(userValue.docs[0].data().username);
       setCars(carList);
     }
@@ -69,7 +69,8 @@ function Garage() {
                   )}
                 </Link>
                 <strong>
-                  <i className="fas fa-warehouse"></i> {owner}'s
+                  <i className="fas fa-warehouse"></i>{" "}
+                  <span className="garage-owner">{owner}'s</span>
                 </strong>{" "}
                 Garage
               </h1>
