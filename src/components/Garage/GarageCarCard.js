@@ -14,18 +14,19 @@ const background = {
     "url(http://speedhunters-wp-production.s3.amazonaws.com/wp-content/uploads/2017/01/23203248/DSC09946NN-1200x800.jpg)",
 };
 
-function CarCardGrad({ year, car }) {
+function CarCardGrad({ car, isOwner }) {
+  console.log(car)
   return (
     <div className="garage-car-card">
-      <Link to="/carpage" className="car-card">
+      <Link to={`/carpage?id=${car.id}`} className="car-card">
         <div className="card-overlay">
           <div className="card-like">
             <i className="fas fa-heart"></i> 22
           </div>
           <div className="car-overlay-title">
-            <span className="car-year">{year}</span>
+            <span className="car-year">{car.data.year}</span>
             <br />
-            {car}
+            {car.data.make} {car.data.model}
           </div>
         </div>
         <div className="card-photo" style={background}></div>
@@ -66,11 +67,13 @@ function CarCardGrad({ year, car }) {
           </Col>
         </Row>
         <div>
-          <Link to="/editcar">
-            <Button className="edit-car-btn">
-              <FontAwesomeIcon icon={faCog} />
-            </Button>
-          </Link>
+          {isOwner && (
+            <Link to={`/editcar?id=${car.id}`}>
+              <Button className="edit-car-btn btn-secondary">
+                <FontAwesomeIcon icon={faCog} />
+              </Button>
+            </Link>
+          )}
         </div>
       </div>
     </div>

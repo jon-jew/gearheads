@@ -1,7 +1,7 @@
 import React from "react";
 import "./Navbar.css";
 import { Link } from "react-router-dom";
-import { Button, Navbar, Dropdown } from "react-bootstrap";
+import { Button, Form, Navbar, Dropdown } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSignOutAlt, faSignInAlt } from "@fortawesome/free-solid-svg-icons";
 
@@ -18,31 +18,29 @@ function Nb() {
   const [user] = useAuthState(auth);
 
   return (
-    <Navbar sticky="top" className="nav">
+    <Navbar sticky="top" className="nav-top">
       <Navbar.Brand>
         <span id="gear">GEAR</span>
         <span id="heads">HEADS</span>
       </Navbar.Brand>
-      {user ? <SignOut /> : <SignIn />}
+      <Navbar.Collapse className="justify-content-end">
+        {user ? <SignOut user={user}/> : <SignIn />}
+      </Navbar.Collapse>
     </Navbar>
   );
 }
 
 function SignIn() {
-  const signInWithGoogle = () => {
-    const provider = new firebase.auth.GoogleAuthProvider();
-    auth.signInWithPopup(provider);
-  };
-
   return (
-    <Button className="sign-in" onClick={signInWithGoogle}>
-      <FontAwesomeIcon icon={faSignInAlt} />
-    </Button>
+    <Link to="/login">
+      <Button className="sign-in btn-secondary">
+        <FontAwesomeIcon icon={faSignInAlt} />
+      </Button>
+    </Link>
   );
 }
 
-function SignOut() {
-  const { uid, photoURL } = auth.currentUser;
+function SignOut({user}) {
 
   return (
     auth.currentUser && (
@@ -50,11 +48,11 @@ function SignOut() {
         <Dropdown>
           <Dropdown.Toggle as={CustomToggle} id="dropdown-custom-components">
             <div className="circular-image">
-              <img src={photoURL} />
+              <img src={user.photoURL} />
             </div>
           </Dropdown.Toggle>
 
-          <Dropdown.Menu>
+          <Dropdown.Menu alignRight>
             <Dropdown.Item eventKey="1" onClick={() => auth.signOut()}>
               <FontAwesomeIcon icon={faSignOutAlt} /> Sign Out
             </Dropdown.Item>
@@ -79,22 +77,5 @@ const CustomToggle = React.forwardRef(({ children, onClick }, ref) => (
     &#x25bc;
   </a>
 ));
-
-// forwardRef again here!
-// Dropdown needs access to the DOM of the Menu to measure it
-const CustomMenu = React.forwardRef(
-  ({ children, style, className, "aria-labelledby": labeledBy }, ref) => {
-    return (
-      <div
-        ref={ref}
-        style={style}
-        className={className}
-        aria-labelledby={labeledBy}
-      >
-        Sign Out
-      </div>
-    );
-  }
-);
 
 export default Nb;

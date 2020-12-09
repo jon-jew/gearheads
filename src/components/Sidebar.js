@@ -1,47 +1,48 @@
 import React from "react";
 import { slide as Menu } from "react-burger-menu";
 import { NavLink } from "react-router-dom";
+import { useAuthState } from "react-firebase-hooks/auth";
 
-class Sidebar extends React.Component {
-  showSettings(event) {
-    event.preventDefault();
-  }
+import firebase from "../services/firebase";
+const auth = firebase.auth();
 
-  render() {
-    return (
-      <Menu
-        id="sidebar"
-        pageWrapId={"page-wrap"}
-        outerContainerId={"outer-container"}
-        styles={styles}
+function Sidebar() {
+  const [user] = useAuthState(auth);
+  return (
+    <Menu
+      id="sidebar"
+      pageWrapId={"page-wrap"}
+      outerContainerId={"outer-container"}
+      styles={styles}
+    >
+      <NavLink
+        to="/"
+        id="home"
+        className="menu-item"
+        activeStyle={{ color: "#692115" }}
       >
+        <i className="list-icon fas fa-home"></i> HOME
+      </NavLink>
+      <NavLink
+        to="/user/"
+        id="explore"
+        className="menu-item"
+        activeStyle={{ color: "#692115" }}
+      >
+        <i className="list-icon fas fa-binoculars"></i> MY PROFILE
+      </NavLink>
+      {user && (
         <NavLink
-          to="/"
-          id="home"
-          className="menu-item"
-          activeStyle={{ color: "#692115" }}
-        >
-          <i className="list-icon fas fa-home"></i> HOME
-        </NavLink>
-        <NavLink
-          to="/user/"
-          id="explore"
-          className="menu-item"
-          activeStyle={{ color: "#692115" }}
-        >
-          <i className="list-icon fas fa-binoculars"></i> MY PROFILE
-        </NavLink>
-        <NavLink
-          to="/garage/"
+          to={`/garage?user=${user.uid}`}
           id="my-garage"
           className="menu-item"
           activeStyle={{ color: "#692115" }}
         >
           <i className="list-icon fas fa-warehouse"></i> MY GARAGE
         </NavLink>
-      </Menu>
-    );
-  }
+      )}
+    </Menu>
+  );
 }
 
 export default Sidebar;
@@ -49,14 +50,15 @@ export default Sidebar;
 var styles = {
   bmBurgerButton: {
     position: "fixed",
-    width: "36px",
-    height: "30px",
+    width: "28px",
+    height: "20px",
     left: "36px",
-    top: "14px",
+    top: "20px",
     zIndex: "100000",
   },
   bmBurgerBars: {
     background: "#FFF",
+    height: "10%",
   },
   bmBurgerBarsHover: {
     background: "#a90000",

@@ -66,6 +66,7 @@
 
 .image-item {
   display: inline-block;
+  position: relative;
   margin-left: 15px;
 }
 
@@ -94,13 +95,11 @@
   padding: 20px;
   margin-right: 5px !important;
   margin-left: 5px !important;
-  border-radius: 10px;
 }
 
 .car-model-form {
   background: rgb(231, 231, 231);
   padding: 20px;
-  border-radius: 10px;
   margin-bottom: 15px;
 }
 
@@ -124,7 +123,30 @@
   border-top-right-radius: 10px;
 }
 
+.edit-car-row {
+  background:  rgb(231, 231, 231);
+  height: calc(100vh - 200px);
+  overflow-y: scroll;
+}
+
 .modal-90w {
     width: 95% !important;
     max-width: 100% !important;
+}
+
+.remove-btn {
+  position: absolute;
+  opacity: 0.8;
+  top: 5px;
+  right: 10px;
+}
+
+.nav-item.nav-link.active {
+  background: rgb(231, 231, 231) !important;
+  border: 0;
+  padding: 10px;
+}
+
+.tab-header {
+  font-size: 20px;
 }

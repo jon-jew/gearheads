@@ -71,6 +71,18 @@ p {
   background: none;
   border: 0;
 }
+
+.google-sign-in {
+  margin-top: 20vh;
+  background: none !important;
+  border: none !important;
+}
+
+.login-logo {
+  background: #111111;
+  padding: 10px;
+}
+
 /*
 -----------------------------------HOME PAGE--------------------------
 */

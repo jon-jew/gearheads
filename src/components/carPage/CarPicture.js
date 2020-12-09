@@ -1,7 +1,6 @@
+import { faBorderNone } from "@fortawesome/free-solid-svg-icons";
 import React, { useState } from "react";
 import { Modal, Button } from "react-bootstrap";
-
-
 
 function Picture({ pic }) {
   const [show, setShow] = useState(false);
@@ -13,10 +12,10 @@ function Picture({ pic }) {
     backgroundPosition: "center",
     backgroundRepeat: "no-repeat",
     backgroundSize: "cover",
-    backgroundImage:
-      `url(${pic})`,
+    backgroundImage: `url('${pic}')`,
   };
 
+  console.log(background);
   return (
     <>
       <div
@@ -24,15 +23,11 @@ function Picture({ pic }) {
         style={background}
         className="picture-exp-small"
       >
-        Caption
+
       </div>
       <Modal show={show} onHide={handleClose} keyboard={false} size="lg">
         <Modal.Body className="picture-modal">
-          <img
-            className="car-modal-picture"
-            src={pic}
-            alt="car-pic"
-          />
+          <img className="car-modal-picture" src={pic} alt="car-pic" />
         </Modal.Body>
         <Modal.Footer className="picture-modal">
           <Button variant="secondary" onClick={handleClose}>

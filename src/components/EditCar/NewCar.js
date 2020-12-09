@@ -111,7 +111,7 @@ function formReducer(prevState, { value, key }) {
 
 let initForm = INITIAL_FORM;
 
-export default function EditCarForm({}) {
+export default function NewCarForm({}) {
   //Upload images stuff
   const [images, setImages] = React.useState([]);
   const [uploadImages, setUploadImages] = React.useState([]);
@@ -129,92 +129,6 @@ export default function EditCarForm({}) {
 
   let carRef = firestore.collection("cars");
   let docRef = null;
-  let uid = "";
-
-  if (location === "/editcar") {
-    const urlParams = new URLSearchParams(window.location.search);
-    uid = urlParams.get("id");
-    docRef = firestore.doc(`cars/${uid}`);
-  }
-
-  const [value, loading, error] = useDocument(
-    firebase.firestore().doc(`cars/${uid}`),
-    {
-      snapshotListenOptions: { includeMetadataChanges: true },
-    }
-  );
-
-  useEffect(() => {
-    if (location === "/editcar" && !loading) getCarData();
-  }, [loading]);
-
-  const getCarData = async () => {
-    let result = null;
-
-    if (value.data().user !== auth.currentUser.uid) {
-      history.push("/");
-      return;
-    } else {
-      result = value.data();
-      onMakeChange(result["make"]);
-      for (const property in result) {
-        if (property !== "make") {
-          dispatch({ value: result[property], key: property });
-        }
-      }
-    }
-
-    await storage
-      .ref(`${uid}/thumbnail.jpg`)
-      .getDownloadURL()
-      .then(function (url) {
-        var xhr = new XMLHttpRequest();
-        xhr.responseType = "blob";
-        xhr.onload = function (event) {
-          var blob = xhr.response;
-        };
-        xhr.open("GET", url);
-        xhr.send();
-        setUpImg(url);
-        setCrop({ unit: "%", width: 100, aspect: 16 / 9 });
-      })
-      .catch(function (error) {
-        // Handle any errors
-      });
-
-    if (result !== null) {
-      const initImages = [];
-      const initFileList = []
-      await Promise.all(
-        result.images.map(async (img) => {
-          initFileList.push(img);
-          await storage
-            .ref(`${uid}/${img}`)
-            .getDownloadURL()
-            .then(async function (url) {
-              var xhr = new XMLHttpRequest();
-              var blob = null;
-              xhr.responseType = "blob";
-              xhr.onload = function (event) {
-                blob = xhr.response;
-              };
-              xhr.open("GET", url);
-              xhr.send();
-              initImages.push({
-                file: new File([blob], img, { type: "image/jpg" }),
-                data_url: url,
-              });
-              Promise.resolve();
-            })
-            .catch(function (error) {
-              // Handle any errors
-            });
-        })
-      );
-      setImages(initImages);
-      setFileList(initFileList);
-    }
-  };
 
   const toastId = React.useRef(null);
 
@@ -441,15 +355,12 @@ export default function EditCarForm({}) {
     }
     const carData = form;
     carData.user = auth.currentUser.uid;
+    carData.images = fileList;
+    carData.likes = [];
 
-    if (location === "/editcar") {
-      snapshotID = uid;
-      await docRef.set(carData);
-    } else if (location === "/newcar") {
-      await carRef.add(carData).then((snapshot) => {
-        snapshotID = snapshot.id;
-      });
-    }
+    await carRef.add(carData).then((snapshot) => {
+      snapshotID = snapshot.id;
+    });
 
     var thumbnailRef = storage.ref(`${snapshotID}/thumbnail.jpg`);
     let p = new Promise((resolve) =>
@@ -468,12 +379,7 @@ export default function EditCarForm({}) {
           uploadImageNames.push(snapshot._delegate.metadata.name);
         });
       })
-    )
-
-
-    await carRef.doc(uid).update({
-      images: fileList,
-    });
+    );
 
     toastId.current = toast("Save success!");
   };
@@ -482,7 +388,7 @@ export default function EditCarForm({}) {
 
   return (
     <div className="edit-car-container">
-      {loading ? (
+      {!user ? (
         <h2>loading</h2>
       ) : (
         <div>

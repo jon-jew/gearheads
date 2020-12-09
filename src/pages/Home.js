@@ -35,10 +35,11 @@ function Home() {
   const [models, setModels] = useState([]);
   const [trim, setTrim] = useState("");
   const [trayOpen, setTrayOpen] = useState(true);
+  console.log(make);
 
   const carsRef = firestore.collection("cars");
 
-  const query = carsRef.orderBy("make").limit(25);
+  const query = carsRef.where("make", "==", "Mazda").where("model", "==", "RX-7");
 
   const [cars] = useCollectionData(query, { idField: "id" });
   console.log(cars);

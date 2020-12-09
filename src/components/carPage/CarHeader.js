@@ -23,12 +23,19 @@ const handleClick = () => {
 
 function CarHeader() {
   const [img, setImg] = useState(null);
+  const [gallery, setGallery] = useState([]);
   const urlParams = new URLSearchParams(window.location.search);
   const uid = urlParams.get("id");
+  const [value, loading, error] = useDocument(
+    firebase.firestore().doc(`cars/${uid}`),
+    {
+      snapshotListenOptions: { includeMetadataChanges: true },
+    }
+  );
 
   useEffect(() => {
-    getCarData();
-  }, []);
+    if (!loading) getCarData();
+  }, [loading]);
 
   const getCarData = async () => {
     await storage
@@ -47,6 +54,35 @@ function CarHeader() {
       .catch(function (error) {
         // Handle any errors
       });
+
+    const initImages = [];
+
+    await Promise.all(
+      value.data().images.map(async (img) => {
+        await storage
+          .ref(`${uid}/${img}`)
+          .getDownloadURL()
+          .then(async function (url) {
+            var xhr = new XMLHttpRequest();
+            var blob = null;
+            xhr.responseType = "blob";
+            xhr.onload = function (event) {
+              blob = xhr.response;
+            };
+            xhr.open("GET", url);
+            xhr.send();
+            initImages.push({
+              file: new File([blob], img, { type: "image/jpg" }),
+              data_url: url,
+            });
+            Promise.resolve();
+          })
+          .catch(function (error) {
+            // Handle any errors
+          });
+      })
+    );
+    setGallery(initImages);
   };
 
   var styles = {
@@ -57,15 +93,6 @@ function CarHeader() {
     backgroundImage: `url(${img})`,
   };
   const carfooter = useRef(null);
-
-  const [value, loading, error] = useDocument(
-    firebase.firestore().doc(`cars/${uid}`),
-    {
-      snapshotListenOptions: { includeMetadataChanges: true },
-    }
-  );
-
-  console.log(loading ? " " : value.data());
 
   const [like, setLike] = useState(false);
   const [hover, setHover] = useState(false);
@@ -87,7 +114,9 @@ function CarHeader() {
           <div className="header-photo-container" style={styles}>
             <div className="car-header-overlay">
               <div className="car-header-year">{value.data().year}</div>
-              <div className="car-header-model">{value.data().make} {value.data().model}</div>
+              <div className="car-header-model">
+                {value.data().make} {value.data().model}
+              </div>
               <div className="car-header-user">
                 <i className="fas fa-user"></i> Speedy Speed Boi
               </div>
@@ -166,7 +195,7 @@ function CarHeader() {
                   </Col>
                 </Row>
                 <div className="car-description">
-                {value.data().description}
+                  {value.data().description}
                 </div>
               </Col>
               <Col xs={8} className="right-footer">
@@ -187,9 +216,9 @@ function CarHeader() {
                 <div className="picture-container"></div>
                 <br />
               </div> */}
-                  <CarPicture pic="http://speedhunters-wp-production.s3.amazonaws.com/wp-content/uploads/2017/01/23200823/DSC09986N-1200x800.jpg" />
-                  <CarPicture pic="http://speedhunters-wp-production.s3.amazonaws.com/wp-content/uploads/2017/01/23200823/DSC09986N-1200x800.jpg" />
-                  <CarPicture pic="http://speedhunters-wp-production.s3.amazonaws.com/wp-content/uploads/2017/01/23200823/DSC09986N-1200x800.jpg" />
+                  {gallery.map((image, index) => (
+                    <CarPicture key={index} pic={image.data_url} />
+                  ))}
                 </div>
               </Col>
             </Row>
