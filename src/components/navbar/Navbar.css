@@ -1,5 +1,5 @@
-.nav {
-    z-index: 900000000000;
+.nav-top {
+    z-index: 900;
     background: #111111;
     text-align: center;
     height: 60px;
@@ -47,3 +47,39 @@
     font-weight: 900;
     font-size: 15pt;
   }
+
+  .sign-in {
+    float: right;
+    margin-right: 20px;
+  }
+
+  .sign-out {
+    float: right;
+    margin-left: 60px;
+  }
+
+  .circular-image {
+    height: 40px;
+    width: 40px;
+    border-radius: 50%;
+    overflow: hidden;
+    background-color: blue;
+    /* commented for demo
+    float: left;
+    margin-left: 125px;
+    margin-top: 20px;
+    */
+    
+    /*for demo*/
+    display:inline-block;
+    vertical-align:middle;
+  }
+  .circular-image img{
+    width:100%;
+  }
+
+  .dropdown-menu {
+    z-index: 99900000 !important;
+  }
+
+

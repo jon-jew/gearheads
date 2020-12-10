@@ -1,21 +1,25 @@
-import React, { Component, useRef, useEffect, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import * as Scroll from "react-scroll";
 import "./css/CarPage.css";
 import CarPicture from "./CarPicture";
+import Loading from '../Loading/Loading';
 import { Row, Col } from "react-bootstrap";
+import { Link } from "react-router-dom";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
+import firebase from "../../services/firebase";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { useDocument } from "react-firebase-hooks/firestore";
+
+const auth = firebase.auth();
+
+const storage = firebase.storage();
+const firestore = firebase.firestore();
 
 var Element = Scroll.Element;
 var scroller = Scroll.scroller;
-var scroll = Scroll.animateScroll;
-
-var styles = {
-  backgroundAttachment: "fixed",
-  backgroundPosition: "center",
-  backgroundRepeat: "no-repeat",
-  backgroundSize: "cover",
-  backgroundImage:
-    "url(http://speedhunters-wp-production.s3.amazonaws.com/wp-content/uploads/2017/01/23203248/DSC09946NN-1200x800.jpg)",
-};
+// var scroll = Scroll.animateScroll;
 
 const handleClick = () => {
   scroller.scrollTo("car-footer", {
@@ -25,149 +29,202 @@ const handleClick = () => {
 };
 
 function CarHeader() {
+  const [img, setImg] = useState(null);
+  const [gallery, setGallery] = useState([]);
+  const [liked, setLiked] = useState(false);
+  const [user] = useAuthState(auth);
+
+  const toastId = React.useRef(null);
+
+  let carRef = firestore.collection("cars");
+
+  const urlParams = new URLSearchParams(window.location.search);
+  const uid = urlParams.get("id");
+  const [value, loading, error] = useDocument(
+    firebase.firestore().doc(`cars/${uid}`),
+    {
+      snapshotListenOptions: { includeMetadataChanges: true },
+    }
+  );
+
+  useEffect(() => {
+    if (!loading) getCarData();
+  }, [loading]);
+
+  const getCarData = async () => {
+    await storage
+      .ref(`${uid}/thumbnail.jpg`)
+      .getDownloadURL()
+      .then(function (url) {
+        var xhr = new XMLHttpRequest();
+        xhr.responseType = "blob";
+        xhr.onload = function (event) {
+          var blob = xhr.response;
+        };
+        xhr.open("GET", url);
+        xhr.send();
+        setImg(url);
+      })
+      .catch(function (error) {
+        // Handle any errors
+      });
+
+    const initImages = [];
+
+    await Promise.all(
+      value.data().images.map(async (img) => {
+        await storage
+          .ref(`${uid}/${img}`)
+          .getDownloadURL()
+          .then(async function (url) {
+            var xhr = new XMLHttpRequest();
+            var blob = null;
+            xhr.responseType = "blob";
+            xhr.onload = function (event) {
+              blob = xhr.response;
+            };
+            xhr.open("GET", url);
+            xhr.send();
+            initImages.push({
+              file: new File([blob], img, { type: "image/jpg" }),
+              data_url: url,
+            });
+            Promise.resolve();
+          })
+          .catch(function (error) {
+            // Handle any errors
+          });
+      })
+    );
+    setLiked(user && value.data().likes.includes(auth.currentUser.uid));
+    setGallery(initImages);
+  };
+
+  var styles = {
+    backgroundAttachment: "fixed",
+    backgroundPosition: "center",
+    backgroundRepeat: "no-repeat",
+    backgroundSize: "cover",
+    backgroundImage: `url(${img})`,
+  };
   const carfooter = useRef(null);
 
-  const [like, setLike] = useState(false);
-  const [hover, setHover] = useState(false);
-
-  function likeClick() {
-    setLike(!like);
-  }
-
-  function likeHover() {
-    setHover(!hover);
+  async function likeClick() {
+    if (user) {
+      if (value.data().likes.includes(auth.currentUser.uid)) {
+        const removedLikes = value
+          .data()
+          .likes.filter((like) => like != auth.currentUser.uid);
+        await carRef.doc(uid).update({
+          likes: removedLikes,
+        });
+        setLiked(false);
+      } else {
+        await carRef.doc(uid).update({
+          likes: [...value.data().likes, auth.currentUser.uid],
+        });
+        setLiked(true);
+      }
+    } else {
+      toastId.current = toast("Please login to like vehicles");
+    }
   }
 
   return (
-    <div className="car-header" id="page">
-      <div className="header-photo-container" style={styles}>
-        <div className="car-header-overlay">
-          <div className="car-header-year">1988</div>
-          <div className="car-header-model">MITSUBISHI STARION </div>
-          <div className="car-header-user">
-            <i className="fas fa-user"></i> Speedy Speed Boi
+    <>
+      {loading ? (
+        <Loading />
+      ) : (
+        <div className="car-header" id="page">
+          <ToastContainer />
+          <div className="header-photo-container" style={styles}>
+            <div className="car-header-overlay">
+              <div className="car-header-year">{value.data().year}</div>
+              <div className="car-header-model">
+                {value.data().make} {value.data().model}
+              </div>
+              <Link to={`/garage?user=${value.data().user}`}>
+                <div className="car-header-user">
+                  <i className="fas fa-user"></i> Speedy Speed Boi
+                </div>
+              </Link>
+              <br />
+              <a className="down-button" onClick={handleClick}>
+                <i className="fas fa-chevron-circle-down"></i>
+              </a>
+              {/* <div className="chassis-code">EA11R</div> */}
+            </div>
           </div>
-          <br />
-          <a className="down-button" onClick={handleClick}>
-            <i class="fas fa-chevron-circle-down"></i>
-          </a>
-          <div className="chassis-code">EA11R</div>
-        </div>
-      </div>
-      <Element name="car-footer" className="car-footer">
-        <Row>
-          <Col xs={4} ref={carfooter} className="left-footer" id="123">
-            <div className="left-header">
-              {like || hover ? (
-                <div
-                  className="like-button"
-                  onMouseEnter={likeHover}
-                  onMouseLeave={likeHover}
-                  onClick={likeClick}
-                >
-                  <i class="fas fa-heart heart-color"></i> 1224
+          <Element name="car-footer" className="car-footer">
+            <Row>
+              <Col xs={4} ref={carfooter} className="left-footer" id="123">
+                <div className="left-header">
+                  <div className="like-button" onClick={likeClick}>
+                    <i
+                      className={
+                        liked ? "fas fa-heart" : "far fa-heart"
+                      }
+                      style={liked ? { color: "#ba6666" } : { color: "#FFF" }}
+                    ></i>{" "}
+                    {value.data().likes.length}
+                  </div>
+                  <span className="footer-user">
+                    <i className="fas fa-user"></i> Speedy Speed Boi's
+                    <br />
+                  </span>
+                  {value.data().year}
+                  <br />
+                  <strong>{value.data().make}</strong>
+                  <br />
+                  {value.data().model} {value.data().trim}
                 </div>
-              ) : (
-                <div
-                  className="like-button"
-                  onMouseEnter={likeHover}
-                  onMouseLeave={likeHover}
-                  onClick={likeClick}
-                >
-                  <i class="fas fa-heart"></i> 1223
+                <Row className="car-stats-row">
+                  <Col>
+                    <span className="car-card-stat">Power</span>
+                    <br />
+                    {value.data().power} HP
+                  </Col>
+                  <Col>
+                    <span className="car-card-stat">Torque</span>
+                    <br />
+                    {value.data().torque} FT/LB
+                  </Col>
+                  <Col>
+                    <span className="car-card-stat">Weight</span>
+                    <br />
+                    {value.data().weight} LBS
+                  </Col>
+                </Row>
+                <Row className="car-stats-row footer-row">
+                  <Col>
+                    <span className="car-card-stat">Engine</span>
+                    <br />
+                    {value.data().displacement} L {value.data().engine}
+                  </Col>
+                  <Col>
+                    <span className="car-card-stat">Layout</span>
+                    <br />
+                    {value.data().layout}
+                  </Col>
+                  <Col>
+                    <span className="car-card-stat">Chassis</span>
+                    <br />
+                    {value.data().chassis}
+                  </Col>
+                </Row>
+                <div className="car-description">
+                  {value.data().description}
                 </div>
-              )}
-              <span className="footer-user">
-                <i className="fas fa-user"></i> Speedy Speed Boi's
-                <br />
-              </span>
-              1988
-              <br />
-              <strong>MITSUBISHI</strong>
-              <br />
-              STARION GSR-VR
-            </div>
-            <Row className="car-stats-row">
-              <Col>
-                <span className="car-card-stat">Power</span>
-                <br />
-                250 HP
               </Col>
-              <Col>
-                <span className="car-card-stat">Torque</span>
-                <br />
-                250 FT/LB
-              </Col>
-              <Col>
-                <span className="car-card-stat">Weight</span>
-                <br />
-                2800 LBS
-              </Col>
-            </Row>
-            <Row className="car-stats-row footer-row">
-              <Col>
-                <span className="car-card-stat">Engine</span>
-                <br />
-                2.6 L 4G54
-              </Col>
-              <Col>
-                <span className="car-card-stat">Layout</span>
-                <br />
-                FR
-              </Col>
-              <Col>
-                <span className="car-card-stat">Chassis</span>
-                <br />
-                A187A
-              </Col>
-            </Row>
-            <div className="car-description">
-              End of Year (2018) Update: Unfortunately 2018 wasn't the year I
-              was hoping for with the car. I made a lot of really great but huge
-              changes in my life, which meant automotively things took a back
-              seat. At the second Autocross event of the year that I attended in
-              May the clutch disk welded itself to the flywheel and rendered the
-              transmission useless. It happened on the launch and ended with a
-              great group of fellow racers pushing the car up on the trailer.
-              Since every other part of my life was insanely busy that meant
-              that the WRX didn't get back on the road till July, and after that
-              I was a little gun shy so we just used the car as a cruiser for
-              the rest of the year. But no sweat, things at home have calmed
-              down and 2019 is looking like it will be another good year! New
-              coilovers, new brakes, and a couple TLC items are all on the
-              docket for the year which will put the car in its best place yet!
-              Stay tuned! Here is my 2006 Subaru Impreza WRX TR. I have owned
-              this car since July of 2010 and it is absolutely my baby. I
-              pinched pennies to be able to afford it while I was in college. I
-              modified it a little here and there throughout school, but it
-              wasn't until after I graduated and started making money that it
-              got to where it is today. It's entire suspension has been rebuilt
-              from the ground up, down to the wheel bearings and dust shields.
-              It has about every Whiteline, Kartboy, and Turn In Concepts
-              suspension part you could want, joined by ST Suspensions coilovers
-              (KW V1's without the fancy stainless body) and Group N tophats.
-              Stoptech pads, rotors, and SS brake lines are also installed. The
-              Enkei RPF1's help it stay light on its feet, I'm addicted to those
-              wheels and have two sets, one with street tires and another with R
-              compounds. The car has a built motor: sleeves, pistons, rods,
-              valves, springs, etc etc etc. I run a Blouch 18g-xt with the
-              factory sized intake and an 8cm turbine housing paired to an STi
-              intercooler. I run 1000cc injectors, DW pump and FPR, with IAG
-              rails. All told the car made 345 whp and 356 wtq. I have turned
-              every bolt on this car myself and taken out, replaced, or repaired
-              every system on the car at least once. I've spent a small fortune
-              on this thing and it really boogies. Enjoy my hard work!
-            </div>
-          </Col>
-          <Col xs={8} className="right-footer">
-            {/* <div className="timeline-header">
+              <Col xs={8} className="right-footer">
+                {/* <div className="timeline-header">
               <strong>
                 <i className="far fa-calendar"></i>
               </strong>{" "}
               | <i className="fas fa-thumbtack"></i>
             </div> */}
-            <div className="pic-container">
-              {/* <div className="month">
+                <div className="pic-container">
+                  {/* <div className="month">
                 <div className="timeline">MAR 2020</div>
                 <div className="picture-container"></div>
                 <br />
@@ -177,14 +234,16 @@ function CarHeader() {
                 <div className="picture-container"></div>
                 <br />
               </div> */}
-              <CarPicture pic="http://speedhunters-wp-production.s3.amazonaws.com/wp-content/uploads/2017/01/23200823/DSC09986N-1200x800.jpg" />
-              <CarPicture pic="http://speedhunters-wp-production.s3.amazonaws.com/wp-content/uploads/2017/01/23200823/DSC09986N-1200x800.jpg" />
-              <CarPicture pic="http://speedhunters-wp-production.s3.amazonaws.com/wp-content/uploads/2017/01/23200823/DSC09986N-1200x800.jpg" />
-            </div>
-          </Col>
-        </Row>
-      </Element>
-    </div>
+                  {gallery.map((image, index) => (
+                    <CarPicture key={index} pic={image.data_url} />
+                  ))}
+                </div>
+              </Col>
+            </Row>
+          </Element>
+        </div>
+      )}
+    </>
   );
 }
 

@@ -1,5 +1,5 @@
 body {
-  background-color: rgb(231, 231, 231);
+  background-color: #FFF;
   font-family: Overpass;
   width: 100%;
 }
@@ -71,13 +71,29 @@ p {
   background: none;
   border: 0;
 }
+
+.google-sign-in {
+  margin-top: 20vh;
+  background: none !important;
+  border: none !important;
+}
+
+.login-logo {
+  background: #111111;
+  padding: 10px;
+}
+
+.garage-owner {
+  text-transform: uppercase;
+}
+
 /*
 -----------------------------------HOME PAGE--------------------------
 */
 
 .home-searchbar-container {
   /* background: rgb(231, 231, 231); */
-  z-index: 10000;
+  z-index: 1000;
   padding: 0px;
   position: fixed;
   left: 20%;

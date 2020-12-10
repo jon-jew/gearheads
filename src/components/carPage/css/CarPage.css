@@ -37,6 +37,19 @@
     line-height: 7vw;
     padding-top: 26px;
   }
+
+  a .car-header-user {
+    color: #FFF;
+    display: inline-block;
+    text-decoration: none;
+    padding: 20px;
+    transition: all 0.2s;
+  }
+
+  a .car-header-user:hover {
+    background: rgba(167, 167, 167, 0.178);
+    text-decoration: none !important;
+  }
   
   .car-header-user {
     font-weight: 300;
@@ -115,6 +128,13 @@
     margin-top: 10px;
       padding: 20px 50px;
       text-align: left;
+  }
+  .like-button {
+    transition: all 1s;
+  }
+
+  .like-button:hover {
+    background: rgba(255, 255, 255, 0.199);
   }
   
   .right-footer {
@@ -263,14 +283,15 @@
   
   .like-button {
     float: right;
-    margin-top: 10px;
     font-size: 2vw;
     transition: all 0.25s ease;
+    padding: 10px;
+    border-radius: 10px;
   }
   
-  .heart-color {
-    color: #ba6666 !important;
-  }
+.fa-heart {
+  transition: all 0.2s;
+}
   
   .follow-button {
     margin-top: 10px;
