@@ -267,7 +267,7 @@ export default function EditCarForm({}) {
       model: "integra",
     };
     axios
-      .post(`localhost:3005/cars/createcar/userid`, car)
+      .post(`http://localhost:3005/cars/createcar/userid`, car)
       .then((response) => response.data)
       .catch((error) => {
         throw error;
