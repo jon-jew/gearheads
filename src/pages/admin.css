@@ -1,0 +1,13 @@
+.red {
+    margin: 37px;
+    border-style: ridge;
+}
+
+.admin-style{
+    margin-top: 16px;
+}
+
+.head {
+    background: rgb(105, 33, 21);
+    color: white;
+}

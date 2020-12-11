@@ -29,6 +29,16 @@ import Loading from "../components/Loading/Loading";
 
 import "../css/App.css";
 
+import {toast, ToastContainer }from"react-toastify";
+import"react-toastify/dist/ReactToastify.css";
+import "./admin.css";
+
+import MaUTable from "@material-ui/core/Table";
+import TableBody from "@material-ui/core/TableBody";
+import TableCell from "@material-ui/core/TableCell";
+import TableHead from "@material-ui/core/TableHead";
+import TableRow from "@material-ui/core/TableRow";
+
 const auth = firebase.auth();
 const firestore = firebase.firestore();
 const storage = firebase.storage();
@@ -50,33 +60,37 @@ function Table({ columns, data }) {
 
   // Render the UI for your table
   return (
-    <table {...getTableProps()}>
+    <MaUTable {...getTableProps()}>
       <thead>
         {headerGroups.map((headerGroup) => (
-          <tr {...headerGroup.getHeaderGroupProps()}>
+          <TableRow {...headerGroup.getHeaderGroupProps()}>
             {headerGroup.headers.map((column) => (
-              <th {...column.getHeaderProps()}>{column.render("Header")}</th>
+              <TableCell className="head" {...column.getHeaderProps()}>{column.render("Header")}</TableCell>
             ))}
-          </tr>
+          </TableRow>
         ))}
       </thead>
-      <tbody {...getTableBodyProps()}>
+      <TableBody {...getTableBodyProps()}>
         {rows.map((row, i) => {
           prepareRow(row);
           return (
-            <tr {...row.getRowProps()}>
+            <TableRow {...row.getRowProps()}>
               {row.cells.map((cell) => {
-                return <td {...cell.getCellProps()}>{cell.render("Cell")}</td>;
+                return <TableCell {...cell.getCellProps()}>{cell.render("Cell")}</TableCell>;
               })}
-            </tr>
+            </TableRow>
           );
         })}
-      </tbody>
-    </table>
+      </TableBody>
+
+    </MaUTable>
+
   );
 }
 
 function Admin() {
+  const toastId = React.useRef(null);
+
   const [user] = useAuthState(auth);
   const [userValue, userLoading, userError] = useCollectionData(
     firestore.collection("users").where("user", "==", user ? user.uid : ""),
@@ -98,15 +112,35 @@ function Admin() {
     }
   }, [userLoading, userValue]);
 
-  const handleDelete = (d) => {
+
+  //call firebase delete funtion
+  const handleDelete = async (id) => {
+
+
+    const deleteRef = firestore.collection("cars").doc(`${id}`);
+    await deleteRef.delete().then(function() {
+      console.log("Document successfully deleted!");
+      toastId.current = toast("Save success!");
+    }).catch(function(error) {
+      console.error("Error removing document: ", error);
+    });
+
+
     //Call Firebase here
-    console.log("delete", d);
+    console.log("delete", id);
   };
 
   const columns = React.useMemo(() => [
     {
       Header: "ID",
       accessor: "id",
+      Footer: info => {
+        const total = React.useMemo(
+            () => info.rows.reduce((sum, row) => row.values.age + sum, 0),
+            [info.rows]
+        );
+        return <>Average Age: {total / info.rows.length}</>;
+      }
     },
     {
       Header: "Make",
@@ -127,7 +161,7 @@ function Admin() {
         <Button
           variant="light"
           onClick={() => {
-            handleDelete(row.values._id);
+            handleDelete(row.values.id);
           }}
         >
           <FontAwesomeIcon icon={faTimes} />
@@ -136,15 +170,18 @@ function Admin() {
     },
   ]);
 
+  // col
   return (
     <div className="App">
       <div id="outer-container">
+        <ToastContainer/>
         <Sidebar />
         <Navbar />
         <main id="page-wrap">
-          <div className="card-container">
-            Admin
-            {!loading ? <Table data={cars} columns={columns} /> : <Loading />}
+          <h3 className="admin-style">Admin</h3>
+          <div className="red">
+
+            {!loading ? <Table data={cars} columns={columns}/> : <Loading />}
           </div>
         </main>
       </div>
