@@ -5,6 +5,7 @@ import CarPage from "./pages/CarPage.js";
 import UserProfile from "./pages/UserProfile.js";
 import EditCar from "./pages/EditCar.js";
 import Login from "./pages/Login";
+import Admin from "./pages/Admin";
 import ScrollToTop from "react-router-scroll-top";
 
 import { BrowserRouter as Router, Route } from "react-router-dom";
@@ -19,6 +20,7 @@ function App() {
       <Route path="/user/" exact component={UserProfile} />
       <Route path="/editcar/" exact component={EditCar} />
       <Route path="/newcar/" exact component={EditCar} />
+      <Route path="/admin/" exact component={Admin} />
       <ScrollToTop />
     </Router>
   );
