@@ -37,6 +37,7 @@ function CarHeader() {
   const toastId = React.useRef(null);
 
   let carRef = firestore.collection("cars");
+  let userRef = firestore.collection("user");
 
   const urlParams = new URLSearchParams(window.location.search);
   const uid = urlParams.get("id");
@@ -118,6 +119,7 @@ function CarHeader() {
         await carRef.doc(uid).update({
           likes: removedLikes,
         });
+        await userRef.doc()
         setLiked(false);
       } else {
         await carRef.doc(uid).update({

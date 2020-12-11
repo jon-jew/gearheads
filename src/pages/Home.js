@@ -20,6 +20,7 @@ import Navbar from "../components/navbar/Navbar.js";
 import Sidebar from "../components/Sidebar.js";
 import CAR_MODELS from "../resources/CAR_MODELS";
 import CarCardGrad from "../components/CarCard/CarCard";
+import Loading from "../components/Loading/Loading";
 
 import "../css/App.css";
 
@@ -27,12 +28,7 @@ const auth = firebase.auth();
 const firestore = firebase.firestore();
 const storage = firebase.storage();
 
-const initForm = {
-  year: new Date().getFullYear() + 1,
-  make: "",
-  model: "",
-  trim: "",
-};
+
 
 function formReducer(prevState, { value, key }) {
   let updatedElement = { ...prevState[key] };
@@ -42,6 +38,26 @@ function formReducer(prevState, { value, key }) {
 
 function Home() {
   const [models, setModels] = useState([]);
+
+  const urlParams = new URLSearchParams(window.location.search);
+  const makeParam = urlParams.get("make");
+  const modelParam = urlParams.get("model");
+
+
+  useEffect(() => {
+    if (makeParam) {
+      const newModels = CAR_MODELS.find((e) => e.brand === makeParam).models;
+      setModels(newModels);
+    }
+  }, [])
+  
+  const initForm = {
+    year: new Date().getFullYear() + 1,
+    make: makeParam ? makeParam : "",
+    model: modelParam ? modelParam : "",
+    trim: "",
+  };
+
   const [form, dispatch] = useReducer(formReducer, initForm);
   const [carRes, setCarRes] = useState([]);
   const [trayOpen, setTrayOpen] = useState(false);
@@ -62,15 +78,15 @@ function Home() {
   const formSubmit = (event) => {
     event.preventDefault();
     const newCars = cars.filter((car) => {
-      if (form.model !== '') return car.model === form.model; 
-      else if (form.model == '') return car;
+      if (form.model !== "") return car.model === form.model;
+      else if (form.model == "") return car;
       return car.make === form.make;
     });
     setCarRes(newCars);
     history.push(
-      `?${form.startYear !== "" ? `year=${form.startYear},` : ""}${
-        form.make !== "" ? `make=${form.make},` : ""
-      }${form.model !== "" ? `model=${form.model}` : ""}`
+      `?${form.make !== "" ? `make=${form.make}&` : ""}${
+        form.model !== "" ? `model=${form.model}` : ""
+      }`
     );
   };
 
@@ -140,7 +156,7 @@ function Home() {
                 <div className="collapse-body">
                   <Form className="car-search-form">
                     <Form.Row className=" car-model">
-                      <Col>
+                      {/* <Col>
                         <div>
                           <Range
                             allowCross={false}
@@ -153,7 +169,7 @@ function Home() {
                             {form.startYear} - {form.endYear}
                           </p>
                         </div>
-                      </Col>
+                      </Col> */}
                       <Col>
                         <Form.Control
                           as="select"
@@ -198,7 +214,7 @@ function Home() {
             {!loading && carRes !== undefined ? (
               carRes.map((car) => <CarCardGrad car={car} />)
             ) : (
-              <div>Loading...</div>
+              <Loading />
             )}
           </div>
         </main>
