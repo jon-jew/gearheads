@@ -1,5 +1,5 @@
 .card-container {
-  margin-top: 100px;
+  margin-top: 130px;
   /* padding-top: 10px;
   overflow: scroll;
   overflow-x: hidden;
@@ -12,8 +12,8 @@
   color: #fff;
   overflow: hidden;
   position: relative;
-  height: 300px;
-  width: 500px;
+  height: 250px;
+  width: 450px;
   display: inline-block;
   margin: 10px;
   outline: none;
@@ -54,7 +54,7 @@
   font-weight: 700;
   padding-top: 15px;
   padding-bottom: 15px;
-  font-size: 20pt;
+  font-size: 15pt;
   text-align: left;
   line-height: 21px;
   padding-left: 10px;
@@ -65,13 +65,13 @@
   font-weight: 700;
   text-transform: uppercase;
   position: absolute;
-  bottom: -10px;
+  bottom: -15px;
   width: 320px;
   padding-bottom: 15px;
-  padding-left: 10px;
-  font-size: 20pt;
+  padding-left: 5px;
+  font-size: 15pt;
   text-align: left;
-  line-height: 21px;
+  line-height: 18px;
 }
 
 a .card-overlay {
@@ -80,20 +80,19 @@ a .card-overlay {
 
 .car-year {
   font-family: "Overpass", sans-serif;
-  font-weight: 100;
+  font-weight: 200;
 }
 
 .car-user {
   font-family: "Overpass", sans-serif;
   font-size: 12pt;
-  font-weight: 200;
+  font-weight: 300;
   text-align: right;
   position: absolute;
-  right: 0;
-  bottom: 14px;
+  right: 5px;
+  bottom: 0px;
   float: right;
-  margin-right: 10px;
-  margin-top: -25px;
+
 }
 
 .card-like {

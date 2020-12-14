@@ -24,8 +24,12 @@ import {
 import Navbar from "../components/navbar/Navbar.js";
 import Sidebar from "../components/Sidebar.js";
 import CAR_MODELS from "../resources/CAR_MODELS";
-import CarCardGrad from "../components/CarCard/CarCard";
+import CommunityCard from '../components/Community/CommunityCard'
 import Loading from "../components/Loading/Loading";
+
+import compic from "../honda_beat_community.png";
+import miatapic from "../mazda_miata_community.png"
+import cappic from '../suzuki_cappuccino_community.png'
 
 import "../css/App.css";
 
@@ -89,52 +93,6 @@ function Admin() {
   const query = carsRef.orderBy("make");
   const [cars, loading, error] = useCollectionData(query, { idField: "id" });
 
-  const history = useHistory();
-
-  useEffect(() => {
-    console.log(userValue)
-    if (userValue  && !userValue[0].admin) {
-        history.push("/");
-    }
-  }, [userLoading, userValue]);
-
-  const handleDelete = (d) => {
-    //Call Firebase here
-    console.log("delete", d);
-  };
-
-  const columns = React.useMemo(() => [
-    {
-      Header: "ID",
-      accessor: "id",
-    },
-    {
-      Header: "Make",
-      accessor: "make",
-    },
-    {
-      Header: "Model",
-      accessor: "model",
-    },
-    {
-      Header: "User",
-      accessor: "user",
-    },
-    {
-      Header: () => null,
-      id: "expander",
-      Cell: ({ row }) => (
-        <Button
-          variant="light"
-          onClick={() => {
-            handleDelete(row.values.id);
-          }}
-        >
-          <FontAwesomeIcon icon={faTimes} />
-        </Button>
-      ),
-    },
-  ]);
 
   return (
     <div className="App">
@@ -142,9 +100,12 @@ function Admin() {
         <Sidebar />
         <Navbar />
         <main id="page-wrap">
-          <div className="card-container">
-            Admin
-            {!loading ? <Table data={cars} columns={columns} /> : <Loading />}
+          <div className="cc-container">
+            <CommunityCard pic={miatapic} make="Mazda" model="Miata" years="1990-1997" chassis="NA"/>
+            <CommunityCard pic={cappic} make="Suzuki" model="Cappuccino" years="1992-1996" chassis="EA11R" />
+            <CommunityCard pic={compic} make="Honda" model="Beat" years="1991-1996" chassis="PP01" />
+            
+
           </div>
         </main>
       </div>

@@ -72,6 +72,8 @@ a .car-header-user:hover {
   z-index: 10;
   height: calc(100vh - 60px);
   min-height: 650px;
+  /* filter: blur(8px);
+  -webkit-filter: blur(8px); */
 }
 
 .car-modal-picture {
@@ -91,7 +93,7 @@ a .car-header-user:hover {
 .car-footer {
   height: calc(100vh - 60px);
   background: #333333;
-  color: #fff;
+  color: rgb(66, 66, 66);
 }
 
 .left-footer {
@@ -101,7 +103,7 @@ a .car-header-user:hover {
   text-align: right;
   padding-left: 50px;
   padding-right: 50px;
-  background: #818181;
+  background: #dadada;
   height: calc(100vh - 60px);
 }
 
@@ -312,6 +314,6 @@ a .car-header-user:hover {
 }
 
 .car-stats-row .car-card-stat {
-  background: #fff;
+  background: rgb(238, 238, 238);
   color: rgb(80, 80, 80);
 }

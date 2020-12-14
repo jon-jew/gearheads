@@ -23,6 +23,14 @@ function Sidebar() {
       >
         <i className="list-icon fas fa-home"></i> HOME
       </NavLink>
+      <NavLink
+        to="/community"
+        id="explore"
+        className="menu-item"
+        activeStyle={{ color: "#692115" }}
+      >
+        <i class="list-icon fas fa-binoculars"></i> EXPLORE
+      </NavLink>
       {/* <NavLink
         to="/user/"
         id="explore"
@@ -33,12 +41,22 @@ function Sidebar() {
       </NavLink> */}
       {user && (
         <NavLink
-          to={`/garage?user=${user.uid}`}
+          to={`/profile?user=${user.uid}`}
           id="my-garage"
           className="menu-item"
           activeStyle={{ color: "#692115" }}
         >
           <i className="list-icon fas fa-warehouse"></i> MY GARAGE
+        </NavLink>
+      )}
+      {user && (
+        <NavLink
+          to={`/liked?user=${user.uid}`}
+          id="my-garage"
+          className="menu-item"
+          activeStyle={{ color: "#692115" }}
+        >
+          <i className="list-icon fas fa-heart"></i> LIKED CARS
         </NavLink>
       )}
     </Menu>

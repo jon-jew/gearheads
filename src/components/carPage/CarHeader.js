@@ -2,7 +2,7 @@ import React, { useRef, useState, useEffect } from "react";
 import * as Scroll from "react-scroll";
 import "./css/CarPage.css";
 import CarPicture from "./CarPicture";
-import Loading from '../Loading/Loading';
+import Loading from "../Loading/Loading";
 import { Row, Col } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
@@ -10,7 +10,7 @@ import "react-toastify/dist/ReactToastify.css";
 
 import firebase from "../../services/firebase";
 import { useAuthState } from "react-firebase-hooks/auth";
-import { useDocument } from "react-firebase-hooks/firestore";
+import { useDocument, useCollection } from "react-firebase-hooks/firestore";
 
 const auth = firebase.auth();
 
@@ -21,23 +21,24 @@ var Element = Scroll.Element;
 var scroller = Scroll.scroller;
 // var scroll = Scroll.animateScroll;
 
-const handleClick = () => {
-  scroller.scrollTo("car-footer", {
-    duration: 1500,
-    smooth: true,
-  });
-};
+// const handleClick = () => {
+//   scroller.scrollTo("car-footer", {
+//     duration: 1500,
+//     smooth: true,
+//   });
+// };
 
 function CarHeader() {
   const [img, setImg] = useState(null);
   const [gallery, setGallery] = useState([]);
   const [liked, setLiked] = useState(false);
   const [user] = useAuthState(auth);
+  const [userId, setUserId] = useState("");
 
   const toastId = React.useRef(null);
 
   let carRef = firestore.collection("cars");
-  let userRef = firestore.collection("user");
+  let userRef = firestore.collection("users");
 
   const urlParams = new URLSearchParams(window.location.search);
   const uid = urlParams.get("id");
@@ -48,9 +49,17 @@ function CarHeader() {
     }
   );
 
+  const [userValue, userLoading, userError] = useCollection(
+    firestore.collection("users").where("user", "==", user ? user.uid : ""),
+    {
+      snapshotListenOptions: { includeMetadataChanges: true },
+    }
+  );
+
   useEffect(() => {
     if (!loading) getCarData();
-  }, [loading]);
+    if (!userLoading) setUserId(userValue.docs[0].id);
+  }, [loading, userLoading]);
 
   const getCarData = async () => {
     await storage
@@ -116,14 +125,27 @@ function CarHeader() {
         const removedLikes = value
           .data()
           .likes.filter((like) => like != auth.currentUser.uid);
+
+        const userRemovedLikes = userValue.docs[0]
+          .data()
+          .likes.filter((like) => like != uid);
+
         await carRef.doc(uid).update({
           likes: removedLikes,
         });
-        await userRef.doc()
+
+        await userRef.doc(userId).update({
+          likes: userRemovedLikes,
+        });
+
         setLiked(false);
       } else {
         await carRef.doc(uid).update({
           likes: [...value.data().likes, auth.currentUser.uid],
+        });
+
+        await userRef.doc(userId).update({
+          likes: [...userValue.docs[0].data().likes, uid],
         });
         setLiked(true);
       }
@@ -139,7 +161,7 @@ function CarHeader() {
       ) : (
         <div className="car-header" id="page">
           <ToastContainer />
-          <div className="header-photo-container" style={styles}>
+          {/* <div className="header-photo-container" style={styles}>
             <div className="car-header-overlay">
               <div className="car-header-year">{value.data().year}</div>
               <div className="car-header-model">
@@ -154,24 +176,24 @@ function CarHeader() {
               <a className="down-button" onClick={handleClick}>
                 <i className="fas fa-chevron-circle-down"></i>
               </a>
-              {/* <div className="chassis-code">EA11R</div> */}
+              <div className="chassis-code">EA11R</div>
             </div>
-          </div>
+          </div> */}
           <Element name="car-footer" className="car-footer">
             <Row>
               <Col xs={4} ref={carfooter} className="left-footer" id="123">
                 <div className="left-header">
                   <div className="like-button" onClick={likeClick}>
                     <i
-                      className={
-                        liked ? "fas fa-heart" : "far fa-heart"
-                      }
-                      style={liked ? { color: "#ba6666" } : { color: "#FFF" }}
+                      className={liked ? "fas fa-heart" : "far fa-heart"}
+                      style={liked ? { color: "#ba6666" } : { color: "#000" }}
                     ></i>{" "}
                     {value.data().likes.length}
                   </div>
                   <span className="footer-user">
-                    <i className="fas fa-user"></i> Speedy Speed Boi's
+                    <Link to={`/profile?user=${value.data().user}`}>
+                      <i className="fas fa-user"></i> {value.data().username}'s
+                    </Link>
                     <br />
                   </span>
                   {value.data().year}

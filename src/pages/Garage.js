@@ -26,7 +26,7 @@ function Garage() {
   const [user] = useAuthState(auth);
   const urlParams = new URLSearchParams(window.location.search);
   const uid = urlParams.get("user");
-  console.log(uid);
+  
   const [userValue, userLoading, userError] = useCollection(
     firestore.collection("users").where("user", "==", uid),
     {

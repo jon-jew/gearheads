@@ -26,6 +26,7 @@ import {
   faCogs,
   faThumbtack,
   faTimes,
+  faTrashAlt,
 } from "@fortawesome/free-solid-svg-icons";
 import { faInstagram } from "@fortawesome/free-brands-svg-icons";
 import {
@@ -48,7 +49,7 @@ import CarPicture from "../carPage/CarPicture.js";
 
 import firebase from "../../services/firebase";
 import { useAuthState } from "react-firebase-hooks/auth";
-import { useCollectionData } from "react-firebase-hooks/firestore";
+import { useCollectionData, useCollection } from "react-firebase-hooks/firestore";
 import { useDocument } from "react-firebase-hooks/firestore";
 
 import INITIAL_FORM from "./initialForm";
@@ -139,6 +140,13 @@ export default function EditCarForm({}) {
 
   const [value, loading, error] = useDocument(
     firebase.firestore().doc(`cars/${uid}`),
+    {
+      snapshotListenOptions: { includeMetadataChanges: true },
+    }
+  );
+
+  const [userValue, userLoading, userError] = useCollection(
+    firestore.collection("users").where("user", "==", user ? auth.currentUser.uid : ""),
     {
       snapshotListenOptions: { includeMetadataChanges: true },
     }
@@ -283,7 +291,7 @@ export default function EditCarForm({}) {
     const imagesOp = [...uploadImages];
     const fileListOp = [...fileList];
     for (let i = images.length; i < imageList.length; i++) {
-      const fileName = `${imageList[i].file.lastModified}-${imageList[i].file.name}`;
+      const fileName = `${Date.now()}-${imageList[i].file.name}`;
       imagesOp.push(imageList[i]);
       fileListOp.push(fileName);
     }
@@ -291,9 +299,6 @@ export default function EditCarForm({}) {
     setFileList(fileListOp);
     setImages(imageList);
   };
-
-  console.log(uploadImages);
-  console.log(fileList);
 
   const onMakeChange = (make) => {
     const newModels = CAR_MODELS.find((e) => e.brand === make).models;
@@ -322,7 +327,7 @@ export default function EditCarForm({}) {
         setPreviewBlob(blob);
         setPreviewPic(previewUrl);
       },
-      "image/png",
+      "image/jpeg",
       1
     );
   }
@@ -421,18 +426,25 @@ export default function EditCarForm({}) {
     });
   }
 
-  const importInstagram = (media_url) => {
-    loadXHR(media_url).then(function (blob) {
-      setImages([
-        ...images,
-        {
-          file: new File([blob], "test.jpg", { type: "image/jpg" }),
-          data_url: media_url,
-        },
-      ]);
+  const importInstagram = (e) => {
+    const filename = `${e.id}.jpg`;
+    loadXHR(e.media_url).then(function (blob) {
+      const importedImage = {
+        file: new File([blob], filename, { type: "image/jpg" }),
+        data_url: e.media_url,
+      };
+
+      const imagesOp = [...uploadImages]; //List of file objects to upload
+      const fileListOp = [...fileList]; //File list of images for car
+      imagesOp.push(importedImage);
+      fileListOp.push(filename);
+
+      setImages([...images, importedImage]);
+      setUploadImages(imagesOp);
+      setFileList(fileListOp);
     });
   };
-
+  
   const saveCar = async () => {
     let snapshotID = "";
     if (upImg === undefined) {
@@ -462,20 +474,35 @@ export default function EditCarForm({}) {
 
     await Promise.all(
       uploadImages.map(async (uploadImage) => {
-        const fileName = `${uploadImage.file.lastModified}-${uploadImage.file.name}`;
+        const fileName = uploadImage.file.name;
         var imageRef = storage.ref(`${snapshotID}/${fileName}`);
         await imageRef.put(uploadImage.file).then(function (snapshot) {
           uploadImageNames.push(snapshot._delegate.metadata.name);
         });
       })
     );
-
+    
     await carRef.doc(uid).update({
       images: fileList,
     });
 
     toastId.current = toast("Save success!");
   };
+
+  const handleDeleteCar = async () => {
+    const deleteRef = firestore.collection("cars").doc(`${uid}`);
+    await deleteRef.delete().then(function() {
+      toastId.current = toast("Deleted Car!")
+      history.push(`/garage?user=${auth.currentUser.uid}`)
+
+    }).catch(function(error) {
+      console.error("Error removing document: ", error);
+    });
+    await storage.ref().child(`IgLddoGez1RHla7ESC4p/`).delete();
+    console.log('deleted');
+
+  };
+  console.log(images);
 
   return (
     <div className="edit-car-container">
@@ -493,6 +520,9 @@ export default function EditCarForm({}) {
           </Button>
           <Button onClick={saveCar} className="btn-success save-btn">
             <FontAwesomeIcon icon={faSave} /> Save
+          </Button>
+          <Button onClick={handleDeleteCar} className="btn-danger save-btn">
+            <FontAwesomeIcon icon={faTrashAlt} /> Delete Car
           </Button>
           {!preview ? (
             <div className="edit-car-form">
@@ -961,7 +991,7 @@ export default function EditCarForm({}) {
                         {element.media_type === "IMAGE" && (
                           <span>
                             <Button
-                              onClick={() => importInstagram(element.media_url)}
+                              onClick={() => importInstagram(element)}
                               className="add-btn btn-success"
                             >
                               Import
@@ -1004,7 +1034,7 @@ export default function EditCarForm({}) {
                                       <div className="album-pic-container">
                                         <Button
                                           onClick={() =>
-                                            importInstagram(img.media_url)
+                                            importInstagram(img)
                                           }
                                           className="album-add-btn btn-success"
                                         >

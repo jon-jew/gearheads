@@ -28,8 +28,6 @@ const auth = firebase.auth();
 const firestore = firebase.firestore();
 const storage = firebase.storage();
 
-
-
 function formReducer(prevState, { value, key }) {
   let updatedElement = { ...prevState[key] };
   updatedElement = value;
@@ -40,21 +38,23 @@ function Home() {
   const [models, setModels] = useState([]);
 
   const urlParams = new URLSearchParams(window.location.search);
-  const makeParam = urlParams.get("make");
-  const modelParam = urlParams.get("model");
-
+  const params = { make: urlParams.get("make"), model: urlParams.get("model") };
+  console.log(params);
+  const carsRef = firestore.collection("cars");
+  let allQuery = carsRef.orderBy('make');
+  let makeQuery = carsRef.where('make', "==", params.make);
 
   useEffect(() => {
-    if (makeParam) {
-      const newModels = CAR_MODELS.find((e) => e.brand === makeParam).models;
+    if (params.make) {
+      const newModels = CAR_MODELS.find((e) => e.brand === params.make).models;
       setModels(newModels);
-    }
-  }, [])
-  
+    } 
+  }, []);
+
   const initForm = {
     year: new Date().getFullYear() + 1,
-    make: makeParam ? makeParam : "",
-    model: modelParam ? modelParam : "",
+    make: params.make ? params.make : "",
+    model: params.model ? params.model : "",
     trim: "",
   };
 
@@ -62,11 +62,9 @@ function Home() {
   const [carRes, setCarRes] = useState([]);
   const [trayOpen, setTrayOpen] = useState(false);
 
-  const carsRef = firestore.collection("cars");
+  
 
-  const query = carsRef.orderBy("make");
-
-  const [cars, loading, error] = useCollectionData(query, { idField: "id" });
+  const [cars, loading, error] = useCollectionData(params.make ? makeQuery : allQuery, { idField: "id" });
 
   useEffect(() => {
     setCarRes(cars);

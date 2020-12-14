@@ -1,0 +1,161 @@
+.cc-container {
+  margin-top: 0px;
+  padding-left: 50px;
+}
+.community-card {
+  background: rgb(238, 238, 238);
+  display: inline-block;
+  font-family: Overpass;
+  margin-top: 50px;
+  margin-right: 70px;
+  overflow: clip;
+  width: 200px;
+  color: rgb(48, 48, 48);
+  vertical-align: top;
+  transition: all 0.3s;
+  border-bottom: solid #424242 3px;
+  box-shadow: 0 19px 38px rgba(0, 0, 0, 0.3), 0 15px 12px rgba(0, 0, 0, 0.2);
+}
+
+.community-card:hover {
+  text-decoration: none;
+  background: rgb(228, 228, 228);
+  color: #000;
+}
+
+.community-card-pic {
+  height: 115px;
+  margin-left: -30px;
+  margin-top: -30px;
+  transition: all 0.3s;
+}
+
+.cc-hover {
+  transform: scale(1.05);
+}
+
+.community-card-title {
+  position: relative;
+  padding: 6px 4px;
+  line-height: 20px;
+  font-size: 25px;
+  /* border-left: solid #424242 3px; */
+  text-align: left;
+}
+
+.community-card-detail {
+  text-transform: uppercase;
+}
+
+.cc-year {
+  font-size: 15px;
+}
+
+.cc-type {
+  font-weight: 600;
+}
+
+.cc-chassis {
+  font-size: 20px;
+  font-weight: 500;
+}
+
+.cc-count {
+  position: absolute;
+  right: -15px;
+  bottom: -15px;
+  background: #242424;
+  color: #fff;
+  font-size: 20px;
+  font-weight: 600;
+  padding: 10px;
+  border-radius: 5px;
+  padding-top: 12px;
+}
+
+a .community-card-detail {
+  /* color: rgb(48, 48, 48); */
+}
+
+/**COMMUNITY PAGE **/
+
+/* .cc-page-header {
+  background: #dadada;
+  color: #424242;
+  width: 100%;
+  padding: 40px;
+  text-align: left;
+} */
+
+.cc-page-header {
+  box-shadow: 0 0 1rem 0 rgba(0, 0, 0, .2); 
+  border-radius: 5px;
+  position: relative;
+  z-index: 1;
+  padding: 20px;
+  background: inherit;
+  overflow: hidden;
+  margin: 10px 10%;
+}
+
+.cc-page-header:before {
+  content: "";
+  position: absolute;
+  background: inherit;
+  z-index: -1;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  box-shadow: inset 0 0 2000px rgba(255, 255, 255, .5);
+  filter: blur(10px);
+  margin: -20px;
+}
+
+.cc-page-pic {
+  width: 400px;
+}
+
+.cc-page-right {
+  display: inline-block;
+  vertical-align: top;
+  width: calc(100% - 500px);
+}
+
+.cc-page-title {
+  display: inline-block;
+}
+
+.cc-page-detail {
+  font-family: Overpass;
+  text-transform: uppercase;
+  line-height: 40px;
+}
+
+.cc-page-description {
+}
+
+.cc-page-detail.cc-year {
+  font-size: 40px;
+}
+
+.cc-page-detail.cc-type {
+  font-size: 50px;
+}
+.cc-page-detail.cc-chassis {
+  font-size: 40px;
+}
+
+.circletag {
+  display: inline-block;
+  width: 400px;
+  height: 400px;
+  background: #e6e6ee;
+  -moz-border-radius: 200px;
+  -webkit-border-radius: 200px;
+  text-align: center;
+}
+
+.circletag img {
+  margin-top: 100px;
+}

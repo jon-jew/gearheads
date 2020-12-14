@@ -7,6 +7,7 @@ import firebase from "../../services/firebase";
 const storage = firebase.storage();
 
 function CarCardGrad({ car }) {
+  console.log(car)
   const [img, setImg] = useState(null);
   useEffect(() => {
     getCarData();
@@ -48,7 +49,7 @@ function CarCardGrad({ car }) {
           {car.make} {car.model}
         </div>
         <span className="car-user">
-          <i className="fas fa-user"></i> SPEEDYSPEEDBOI
+          <i className="fas fa-user"></i> {car.username}
         </span>
       </div>
       <div className="card-photo" style={background}></div>

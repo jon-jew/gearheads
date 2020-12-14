@@ -194,8 +194,8 @@ export default function NewCarForm({}) {
 
   const maxNumber = 69;
   const onChange = (imageList, addUpdateIndex) => {
-    const imagesOp = [...uploadImages];
-    const fileListOp = [...fileList];
+    const imagesOp = [...uploadImages]; //List of files to upload
+    const fileListOp = [...fileList]; //File list for car entry
     for (let i = images.length; i < imageList.length; i++) {
       const fileName = `${imageList[i].file.lastModified}-${imageList[i].file.name}`;
       imagesOp.push(imageList[i]);
@@ -335,18 +335,25 @@ export default function NewCarForm({}) {
     });
   }
 
-  const importInstagram = (media_url) => {
-    loadXHR(media_url).then(function (blob) {
-      setImages([
-        ...images,
-        {
-          file: new File([blob], "test.jpg", { type: "image/jpg" }),
-          data_url: media_url,
-        },
-      ]);
+  const importInstagram = (e) => {
+    const filename = e.id;
+    console.log(filename);
+    loadXHR(e.media_url).then(function (blob) {
+      const importedImage = {
+        file: new File([blob], filename, { type: "image/jpg" }),
+        data_url: e.media_url,
+      };
+      const imagesOp = [...uploadImages]; //List of file objects to upload
+      const fileListOp = [...fileList]; //File list of images for car
+      imagesOp.push(importedImage);
+      fileListOp.push(`${filename}.jpg`);
+
+      setImages(imagesOp);
+      setUploadImages(imagesOp);
+      setFileList(fileListOp);
     });
   };
-
+  
   const saveCar = async () => {
     let snapshotID = "";
     if (upImg === undefined) {
@@ -355,6 +362,7 @@ export default function NewCarForm({}) {
     }
     const carData = form;
     carData.user = auth.currentUser.uid;
+    carData.username = auth.currentUser.displayName;
     carData.images = fileList;
     carData.likes = [];
 
@@ -870,7 +878,7 @@ export default function NewCarForm({}) {
                         {element.media_type === "IMAGE" && (
                           <span>
                             <Button
-                              onClick={() => importInstagram(element.media_url)}
+                              onClick={() => importInstagram(element)}
                               className="add-btn btn-success"
                             >
                               Import
@@ -913,7 +921,7 @@ export default function NewCarForm({}) {
                                       <div className="album-pic-container">
                                         <Button
                                           onClick={() =>
-                                            importInstagram(img.media_url)
+                                            importInstagram(img)
                                           }
                                           className="album-add-btn btn-success"
                                         >
