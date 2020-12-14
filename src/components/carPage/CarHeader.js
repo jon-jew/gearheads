@@ -83,6 +83,7 @@ function CarHeader() {
 
     await Promise.all(
       value.data().images.map(async (img) => {
+        console.log(img)
         await storage
           .ref(`${uid}/${img}`)
           .getDownloadURL()
@@ -118,6 +119,8 @@ function CarHeader() {
     backgroundImage: `url(${img})`,
   };
   const carfooter = useRef(null);
+
+  console.log(gallery)
 
   async function likeClick() {
     if (user) {

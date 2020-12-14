@@ -194,10 +194,10 @@ export default function NewCarForm({}) {
 
   const maxNumber = 69;
   const onChange = (imageList, addUpdateIndex) => {
-    const imagesOp = [...uploadImages]; //List of files to upload
-    const fileListOp = [...fileList]; //File list for car entry
+    const imagesOp = [...uploadImages];
+    const fileListOp = [...fileList];
     for (let i = images.length; i < imageList.length; i++) {
-      const fileName = `${imageList[i].file.lastModified}-${imageList[i].file.name}`;
+      const fileName = `${Date.now()}-${imageList[i].file.name}`;
       imagesOp.push(imageList[i]);
       fileListOp.push(fileName);
     }
@@ -236,7 +236,7 @@ export default function NewCarForm({}) {
         setPreviewBlob(blob);
         setPreviewPic(previewUrl);
       },
-      "image/png",
+      "image/jpeg",
       1
     );
   }
@@ -336,19 +336,19 @@ export default function NewCarForm({}) {
   }
 
   const importInstagram = (e) => {
-    const filename = e.id;
-    console.log(filename);
+    const filename = `${e.id}.jpg`;
     loadXHR(e.media_url).then(function (blob) {
       const importedImage = {
         file: new File([blob], filename, { type: "image/jpg" }),
         data_url: e.media_url,
       };
+
       const imagesOp = [...uploadImages]; //List of file objects to upload
       const fileListOp = [...fileList]; //File list of images for car
       imagesOp.push(importedImage);
-      fileListOp.push(`${filename}.jpg`);
+      fileListOp.push(filename);
 
-      setImages(imagesOp);
+      setImages([...images, importedImage]);
       setUploadImages(imagesOp);
       setFileList(fileListOp);
     });
@@ -380,8 +380,8 @@ export default function NewCarForm({}) {
     const uploadImageNames = [];
 
     await Promise.all(
-      uploadImages.map(async (uploadImage) => {
-        const fileName = `${uploadImage.file.lastModified}-${uploadImage.file.name}`;
+      uploadImages.map(async (uploadImage, index) => {
+        const fileName = fileList[index];
         var imageRef = storage.ref(`${snapshotID}/${fileName}`);
         await imageRef.put(uploadImage.file).then(function (snapshot) {
           uploadImageNames.push(snapshot._delegate.metadata.name);

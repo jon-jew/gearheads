@@ -56,7 +56,7 @@ function SignOut({user}) {
             <Dropdown.Item eventKey="1" onClick={() => auth.signOut()}>
               <FontAwesomeIcon icon={faSignOutAlt} /> Sign Out
             </Dropdown.Item>
-            <Dropdown.Item>Profile</Dropdown.Item>
+            {/* <Dropdown.Item>Profile</Dropdown.Item> */}
           </Dropdown.Menu>
         </Dropdown>
       </div>

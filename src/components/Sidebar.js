@@ -4,10 +4,25 @@ import { NavLink } from "react-router-dom";
 import { useAuthState } from "react-firebase-hooks/auth";
 
 import firebase from "../services/firebase";
+import {
+  useCollectionData,
+  useCollection,
+} from "react-firebase-hooks/firestore";
 const auth = firebase.auth();
+const firestore = firebase.firestore();
+
 
 function Sidebar() {
   const [user] = useAuthState(auth);
+  const [userValue, userLoading, userError] = useCollectionData(
+    firestore
+      .collection("users")
+      .where("user", "==", user ? auth.currentUser.uid : ""),
+    {
+      snapshotListenOptions: { includeMetadataChanges: true },
+    }
+  );
+  console.log(userValue);
   return (
     <Menu
       id="sidebar"
@@ -58,6 +73,16 @@ function Sidebar() {
         >
           <i className="list-icon fas fa-heart"></i> LIKED CARS
         </NavLink>
+      )}
+      {(user && !userLoading && userValue[0].admin) && (
+        <NavLink
+        to={`/admin`}
+        id="my-garage"
+        className="menu-item"
+        activeStyle={{ color: "#692115" }}
+      >
+        <i class="fas fa-user-shield"></i> ADMIN
+      </NavLink>
       )}
     </Menu>
   );

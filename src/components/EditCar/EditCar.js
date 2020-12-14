@@ -49,7 +49,10 @@ import CarPicture from "../carPage/CarPicture.js";
 
 import firebase from "../../services/firebase";
 import { useAuthState } from "react-firebase-hooks/auth";
-import { useCollectionData, useCollection } from "react-firebase-hooks/firestore";
+import {
+  useCollectionData,
+  useCollection,
+} from "react-firebase-hooks/firestore";
 import { useDocument } from "react-firebase-hooks/firestore";
 
 import INITIAL_FORM from "./initialForm";
@@ -146,7 +149,9 @@ export default function EditCarForm({}) {
   );
 
   const [userValue, userLoading, userError] = useCollection(
-    firestore.collection("users").where("user", "==", user ? auth.currentUser.uid : ""),
+    firestore
+      .collection("users")
+      .where("user", "==", user ? auth.currentUser.uid : ""),
     {
       snapshotListenOptions: { includeMetadataChanges: true },
     }
@@ -301,10 +306,12 @@ export default function EditCarForm({}) {
   };
 
   const onMakeChange = (make) => {
-    const newModels = CAR_MODELS.find((e) => e.brand === make).models;
-    dispatch({ value: make, key: "make" });
-    setModels(newModels);
-    dispatch({ value: newModels[0], key: "model" });
+    if (make !== "") {
+      const newModels = CAR_MODELS.find((e) => e.brand === make).models;
+      dispatch({ value: make, key: "make" });
+      setModels(newModels);
+      dispatch({ value: newModels[0], key: "model" });
+    }
   };
 
   function generateDownload(previewCanvas, crop) {
@@ -444,7 +451,7 @@ export default function EditCarForm({}) {
       setFileList(fileListOp);
     });
   };
-  
+
   const saveCar = async () => {
     let snapshotID = "";
     if (upImg === undefined) {
@@ -473,15 +480,16 @@ export default function EditCarForm({}) {
     const uploadImageNames = [];
 
     await Promise.all(
-      uploadImages.map(async (uploadImage) => {
-        const fileName = uploadImage.file.name;
+      uploadImages.map(async (uploadImage, index) => {
+        const fileName = fileList[index];
+        console.log(fileName, uploadImage)
         var imageRef = storage.ref(`${snapshotID}/${fileName}`);
         await imageRef.put(uploadImage.file).then(function (snapshot) {
           uploadImageNames.push(snapshot._delegate.metadata.name);
         });
       })
     );
-    
+
     await carRef.doc(uid).update({
       images: fileList,
     });
@@ -491,18 +499,18 @@ export default function EditCarForm({}) {
 
   const handleDeleteCar = async () => {
     const deleteRef = firestore.collection("cars").doc(`${uid}`);
-    await deleteRef.delete().then(function() {
-      toastId.current = toast("Deleted Car!")
-      history.push(`/garage?user=${auth.currentUser.uid}`)
-
-    }).catch(function(error) {
-      console.error("Error removing document: ", error);
-    });
+    await deleteRef
+      .delete()
+      .then(function () {
+        toastId.current = toast("Deleted Car!");
+        history.push(`/profile?user=${auth.currentUser.uid}`);
+      })
+      .catch(function (error) {
+        console.error("Error removing document: ", error);
+      });
     await storage.ref().child(`IgLddoGez1RHla7ESC4p/`).delete();
-    console.log('deleted');
-
+    console.log("deleted");
   };
-  console.log(images);
 
   return (
     <div className="edit-car-container">
@@ -1033,9 +1041,7 @@ export default function EditCarForm({}) {
                                     return (
                                       <div className="album-pic-container">
                                         <Button
-                                          onClick={() =>
-                                            importInstagram(img)
-                                          }
+                                          onClick={() => importInstagram(img)}
                                           className="album-add-btn btn-success"
                                         >
                                           Import
