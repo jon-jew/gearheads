@@ -17,7 +17,7 @@ function Sidebar() {
   const [userValue, userLoading, userError] = useCollectionData(
     firestore
       .collection("users")
-      .where("user", "==", user ? auth.currentUser.uid : ""),
+      .where("user", "==", user && auth.currentUser ? auth.currentUser.uid : ""),
     {
       snapshotListenOptions: { includeMetadataChanges: true },
     }
@@ -81,7 +81,7 @@ function Sidebar() {
         className="menu-item"
         activeStyle={{ color: "#692115" }}
       >
-        <i class="fas fa-user-shield"></i> ADMIN
+        <i class="list-icon fas fa-user-shield"></i> ADMIN
       </NavLink>
       )}
     </Menu>

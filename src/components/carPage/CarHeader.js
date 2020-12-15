@@ -58,7 +58,7 @@ function CarHeader() {
 
   useEffect(() => {
     if (!loading) getCarData();
-    if (!userLoading) setUserId(userValue.docs[0].id);
+    if (!userLoading && user) setUserId(userValue.docs[0].id);
   }, [loading, userLoading]);
 
   const getCarData = async () => {
